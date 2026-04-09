@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"fmt"
 	"io"
@@ -40,7 +41,8 @@ func LoggingHandler(content http.Handler, logger *logging.Logger) http.Handler {
 			entry.HTTP2 = capture.ExtractHTTP2(data)
 		}
 
-		// HTTP info
+		// HTTP info — reads and restores r.Body so downstream handlers
+		// (e.g. CollectHandler) can still read the request body.
 		entry.HTTP = buildHTTPInfo(r)
 
 		// Serve the actual content
@@ -78,13 +80,22 @@ func buildHTTPInfo(r *http.Request) logging.HTTPInfo {
 		info.Headers[key] = r.Header[key]
 	}
 
-	// Body hash
+	// Body hash — read the entire body, hash it, then restore r.Body so
+	// downstream handlers can read it again. Without the restore,
+	// CollectHandler (and any other POST handler) would receive an empty body.
 	if r.Body != nil {
-		h := sha256.New()
-		n, _ := io.Copy(h, r.Body)
-		info.BodySize = n
-		if n > 0 {
-			info.BodySHA256 = fmt.Sprintf("%x", h.Sum(nil))
+		bodyBytes, err := io.ReadAll(r.Body)
+		r.Body.Close()
+		// Always restore, even if the read failed, so r.Body is never nil.
+		r.Body = io.NopCloser(bytes.NewReader(bodyBytes))
+
+		if err == nil {
+			info.BodySize = int64(len(bodyBytes))
+			if len(bodyBytes) > 0 {
+				h := sha256.New()
+				h.Write(bodyBytes)
+				info.BodySHA256 = fmt.Sprintf("%x", h.Sum(nil))
+			}
 		}
 	}
 

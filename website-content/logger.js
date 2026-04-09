@@ -84,9 +84,13 @@
    * the POST even as the page is torn down, without blocking navigation.
    * This is the ONLY outbound request the logger ever makes.
    */
+  var flushed = false;
+
   function flushOnUnload() {
-    if (buffer.length === 0) return;
-    if (!navigator.sendBeacon) return; // silently drop on unsupported browsers
+    if (flushed || buffer.length === 0) return;
+    if (!navigator.sendBeacon) return;
+
+    flushed = true; // prevent double-send
 
     var payload = JSON.stringify({
       session:    sessionId,
@@ -117,6 +121,14 @@
 
   document.addEventListener('visibilitychange', function () {
     record('visibility', { state: document.visibilityState });
+    if (document.visibilityState === 'hidden') {
+      flushOnUnload();
+    }
+  });
+
+  window.addEventListener('pagehide', function () {
+    record('page', { action: 'pagehide' });
+    flushOnUnload();
   });
 
   // ── MOUSE ─────────────────────────────────────────────────────────────────
