@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscribe · V3 Subscription Button</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --border: #2a2a3f;
+    --accent: #e8ff47;
+    --accent2: #7b5cf0;
+    --text: #e0e0f0;
+    --text-muted: #6b6b8a;
+    --success: #3dffa0;
+    --error: #ff4f6e;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  header {
+    padding: 2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .lab-badge {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: var(--accent);
+    color: #000;
+    padding: 3px 8px;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+  }
+
+  header h1 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  header p {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  .nav-tabs {
+    display: flex;
+    padding: 0 3rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    overflow-x: auto;
+  }
+
+  .nav-tab {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 1rem 1.5rem;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    display: block;
+  }
+
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .scenario-pane {
+    padding: 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scenario-header { margin-bottom: 2.5rem; }
+
+  .scenario-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+
+  .task-prompt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 0.75rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+
+  .task-prompt span:first-child { color: var(--accent); font-weight: 700; }
+
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3rem;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .subscribe-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .subscribe-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  .subscribe-row {
+    display: flex;
+    width: 100%;
+  }
+
+  #email-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    border-right: none;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  #email-input::placeholder { color: var(--text-muted); }
+  #email-input:focus { border-color: var(--accent2); }
+  #email-input.invalid { border-color: var(--error); }
+
+    #submit-btn {
+    width: 134.765625px;
+    height: 44px;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 700;
+    background: var(--accent2);
+    border: 2px solid var(--accent2);
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  #submit-btn:hover { background: #9370f8; border-color: #9370f8; }
+
+  .error-msg {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--error);
+    min-height: 1rem;
+  }
+
+  .keyboard-hint {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+  }
+
+  .event-log {
+    background: #080810;
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    max-height: 140px;
+    overflow-y: auto;
+    margin-top: 1rem;
+  }
+
+  .event-log-title {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .log-entry {
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    gap: 1rem;
+  }
+
+  .log-ts { color: var(--text-muted); }
+  .log-event { color: var(--accent); }
+  .log-detail { color: var(--text); opacity: 0.8; }
+
+  .reset-btn {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: all 0.15s;
+    margin-top: 0.75rem;
+  }
+
+  .reset-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+  .event-log::-webkit-scrollbar { width: 4px; }
+  .event-log::-webkit-scrollbar-track { background: transparent; }
+  .event-log::-webkit-scrollbar-thumb { background: var(--border); }
+
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--success);
+    color: #000;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 9998;
+    letter-spacing: 0.08em;
+  }
+
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Event log hidden from UI — logs saved silently in memory */
+  .event-log, .event-log-title, .reset-btn { display: none !important; }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="lab-badge">LAB</span>
+  <h1>UX Behavior Test Suite</h1>
+  <p>3 variants · subscribe button</p>
+</header>
+
+<nav class="nav-tabs">
+  <a class="nav-tab" href="subscribe-v1.html">V1 · Subscription Button</a>
+  <a class="nav-tab" href="subscribe-v2.html">V2 · Subscription Button</a>
+  <a class="nav-tab active" href="subscribe-v3.html">V3 · Subscription Button</a>
+  <a class="nav-tab" href="s2-scroll-gate.html">S2 · Scroll Gate</a>
+  <a class="nav-tab" href="s3-hover-reveal.html">S3 · Hover Reveal</a>
+  <a class="nav-tab" href="s4-dom-mismatch.html">S4 · DOM Mismatch</a>
+  <a class="nav-tab" href="s5-delayed-feedback.html">S5 · Delayed Feedback</a>
+</nav>
+
+<div class="scenario-pane">
+  <div class="scenario-header">
+    <div class="scenario-num">VARIANT 03 · Subscription</div>
+    <div class="scenario-title">Subscribe to SPIN Lab's Newsletter</div>
+    <div class="task-prompt"><span>Keep up to date!</span> "Enter your email and subscribe."</div>
+  </div>
+
+  <div class="stage">
+    <div class="subscribe-wrap">
+      <span class="subscribe-label">EMAIL ADDRESS</span>
+      <div class="subscribe-row">
+        <input
+          id="email-input"
+          type="email"
+          placeholder="you@example.com"
+          oninput="s1onInput()"
+          onkeydown="if(event.key==='Enter') s1submit()"
+        />
+        <!-- Same size as V1, correct action, ✔ icon only -->
+        <button id="submit-btn" onclick="s1submit()" title="Subscribe">✔</button>
+      </div>
+      <span class="error-msg" id="error-msg"></span>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <span class="keyboard-hint">↵ Enter</span>
+      <span style="font-family:var(--mono);font-size:0.68rem;color:var(--text-muted)">keyboard shortcut also works</span>
+    </div>
+  </div>
+
+  <div class="event-log-title">EVENT LOG</div>
+  <div class="event-log" id="s1-log"></div>
+  <button class="reset-btn" onclick="s1reset()">RESET</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+function s1log(ev, detail) { addLog('s1-log', ev, detail); }
+function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+function s1onInput() {
+  const input = document.getElementById('email-input');
+  input.classList.remove('invalid');
+  document.getElementById('error-msg').textContent = '';
+  s1log('input', input.value || '(empty)');
+}
+
+function s1submit() {
+  const input = document.getElementById('email-input');
+  const err = document.getElementById('error-msg');
+  const val = input.value.trim();
+  if (!val) {
+    input.classList.add('invalid');
+    err.textContent = 'Please enter an email address.';
+    s1log('submit', 'BLOCKED — empty field');
+    return;
+  }
+  if (!isValidEmail(val)) {
+    input.classList.add('invalid');
+    err.textContent = 'Please enter a valid email address.';
+    s1log('submit', 'BLOCKED — invalid: ' + val);
+    return;
+  }
+  s1log('submit', '✓ Subscribed: ' + val);
+  showToast('✓ Subscribed: ' + val);
+  input.value = '';
+  err.textContent = '';
+  input.classList.remove('invalid');
+}
+
+function s1reset() {
+  const input = document.getElementById('email-input');
+  input.value = '';
+  input.classList.remove('invalid');
+  document.getElementById('error-msg').textContent = '';
+  clearLog('s1-log');
+}
+</script>
+
+<script src="/website-content/logger.js"></script>
+</body>
+</html>

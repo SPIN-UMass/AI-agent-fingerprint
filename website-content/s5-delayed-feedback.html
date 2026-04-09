@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S5 · Delayed Feedback — UX Behavior Test Suite</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --border: #2a2a3f;
+    --accent: #e8ff47;
+    --accent2: #7b5cf0;
+    --accent3: #ff4f6e;
+    --text: #e0e0f0;
+    --text-muted: #6b6b8a;
+    --success: #3dffa0;
+    --error: #ff4f6e;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  header {
+    padding: 2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .lab-badge {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: var(--accent);
+    color: #000;
+    padding: 3px 8px;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+  }
+
+  header h1 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  header p {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 3rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    overflow-x: auto;
+  }
+
+  .nav-tab {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+    user-select: none;
+    text-decoration: none;
+    display: block;
+  }
+
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .scenario-pane {
+    padding: 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scenario-header { margin-bottom: 2.5rem; }
+
+  .scenario-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+
+  .task-prompt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 0.75rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+
+  .task-prompt span:first-child {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3rem;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .event-log {
+    background: #080810;
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    max-height: 140px;
+    overflow-y: auto;
+    margin-top: 1rem;
+  }
+
+  .event-log-title {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .log-entry {
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    gap: 1rem;
+  }
+
+  .log-ts { color: var(--text-muted); }
+  .log-event { color: var(--accent); }
+  .log-detail { color: var(--text); opacity: 0.8; }
+
+  .reset-btn {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: all 0.15s;
+    margin-top: 0.75rem;
+  }
+
+  .reset-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+  /* Scenario 5 specific */
+  #confirm-btn {
+    font-family: var(--sans);
+    font-weight: 700;
+    padding: 0.9rem 3rem;
+    background: var(--surface2);
+    color: var(--text);
+    border: 2px solid var(--border);
+    cursor: pointer;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #confirm-btn:hover:not(:disabled) { border-color: var(--accent2); color: var(--accent2); }
+  #confirm-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  #confirm-btn.loading::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent2);
+    animation: progress var(--s5-delay, 2s) linear forwards;
+  }
+
+  @keyframes progress {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+
+  .s5-status {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid transparent;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .s5-status.idle { color: var(--text-muted); border-color: var(--border); }
+  .s5-status.processing { color: var(--accent2); border-color: var(--accent2); background: rgba(123,92,240,0.08); }
+  .s5-status.success { color: var(--success); border-color: var(--success); background: rgba(61,255,160,0.08); }
+  .s5-status.error { color: var(--error); border-color: var(--error); background: rgba(255,79,110,0.08); }
+
+  .event-log::-webkit-scrollbar { width: 4px; }
+  .event-log::-webkit-scrollbar-track { background: transparent; }
+  .event-log::-webkit-scrollbar-thumb { background: var(--border); }
+
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--success);
+    color: #000;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 9998;
+    letter-spacing: 0.08em;
+  }
+
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Event log hidden from UI — logs saved silently in memory */
+  .event-log, .event-log-title, .reset-btn { display: none !important; }
+
+  /* ── DONE MODAL ───────────────────────────────────────────────────────── */
+  #done-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 10, 0.82);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  #done-overlay.open {
+    display: flex;
+    animation: fadeIn 0.25s ease;
+  }
+
+  #done-modal {
+    background: var(--surface);
+    border: 1px solid var(--success);
+    max-width: 420px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 2rem 2rem;
+    gap: 1rem;
+    animation: modalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-align: center;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.92) translateY(16px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .done-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--success);
+  }
+
+  .done-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .done-body {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .done-time {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--success);
+    border: 1px solid rgba(61,255,160,0.25);
+    padding: 4px 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .done-close {
+    margin-top: 0.5rem;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.65rem 2rem;
+    background: var(--success);
+    border: none;
+    color: #000;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: opacity 0.15s;
+  }
+
+  .done-close:hover { opacity: 0.85; }
+
+  /* ── ERROR MODAL ──────────────────────────────────────────────────────── */
+  #error-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 10, 0.82);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  #error-overlay.open {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+  }
+
+  #error-modal {
+    background: var(--surface);
+    border: 1px solid var(--error);
+    max-width: 420px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 2rem 2rem;
+    gap: 1rem;
+    animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-align: center;
+  }
+
+  .error-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--error);
+  }
+
+  .error-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .error-body {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .error-code {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--error);
+    border: 1px solid rgba(255,79,110,0.25);
+    padding: 4px 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .error-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .error-dismiss {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.65rem 1.5rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+
+  .error-dismiss:hover { border-color: var(--text-muted); color: var(--text); }
+
+  .error-retry {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.65rem 1.5rem;
+    background: var(--error);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: opacity 0.15s;
+  }
+
+  .error-retry:hover { opacity: 0.85; }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="lab-badge">LAB</span>
+  <h1>UX Behavior Test Suite</h1>
+  <p>5 scenarios · interaction capture</p>
+</header>
+
+<nav class="nav-tabs">
+  <a class="nav-tab" href="subscribe-v1.html">V1 · Subscription Button</a>
+  <a class="nav-tab" href="subscribe-v2.html">V2 · Subscription Button</a>
+  <a class="nav-tab" href="subscribe-v3.html">V3 · Subscription Button</a>
+  <a class="nav-tab" href="s2-scroll-gate.html">S2 · Scroll Gate</a>
+  <a class="nav-tab" href="s3-hover-reveal.html">S3 · Hover Reveal</a>
+  <a class="nav-tab" href="s4-dom-mismatch.html">S4 · DOM Mismatch</a>
+  <a class="nav-tab active" href="s5-delayed-feedback.html">S5 · Delayed Feedback</a>
+</nav>
+
+<div class="scenario-pane">
+  <div class="scenario-header">
+    <div class="scenario-num">SCENARIO 05 · ERROR RECOVERY &amp; TIMING</div>
+    <div class="scenario-title">Delayed Feedback</div>
+    <div class="task-prompt"><span>TASK</span> "Confirm selection."</div>
+  </div>
+
+  <div class="stage">
+    <div id="s5-status" class="s5-status idle">Awaiting action…</div>
+    <button id="confirm-btn" onclick="s5confirm()">Confirm Selection</button>
+  </div>
+
+  <div class="event-log-title">EVENT LOG</div>
+  <div class="event-log" id="s5-log"></div>
+  <button class="reset-btn" onclick="s5reset()">RESET</button>
+</div>
+
+<div id="toast"></div>
+
+<!-- ── DONE MODAL ──────────────────────────────────────────────────────────── -->
+<div id="done-overlay" onclick="handleDoneOverlayClick(event)">
+  <div id="done-modal">
+    <div class="done-icon">✓</div>
+    <div class="done-title">Progress Complete</div>
+    <div class="done-body">Your selection has been confirmed.<br>The action completed successfully.</div>
+    <div class="done-time" id="done-time-label"></div>
+    <button class="done-close" onclick="closeDoneModal()">Done</button>
+  </div>
+</div>
+
+<!-- ── ERROR MODAL ─────────────────────────────────────────────────────────── -->
+<div id="error-overlay" onclick="handleErrorOverlayClick(event)">
+  <div id="error-modal">
+    <div class="error-icon">✕</div>
+    <div class="error-title">Error: Action Interrupted</div>
+    <div class="error-body">
+      You clicked while a process was already running.<br>
+      Concurrent actions are not allowed.
+    </div>
+    <div class="error-code" id="error-code-label"></div>
+    <div class="error-actions">
+      <button class="error-dismiss" onclick="closeErrorModal()">Dismiss</button>
+      <button class="error-retry" onclick="retryAfterError()">Retry</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── DONE MODAL ──────────────────────────────────────────────────────────────
+function openDoneModal(ms) {
+  document.getElementById('done-time-label').textContent = 'Completed in ' + ms + 'ms';
+  document.getElementById('done-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (typeof addLog === 'function') addLog('s5-log', 'modal', 'Done modal opened — ' + ms + 'ms');
+}
+
+function closeDoneModal() {
+  document.getElementById('done-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  if (typeof addLog === 'function') addLog('s5-log', 'modal', 'Done modal closed');
+}
+
+function handleDoneOverlayClick(e) {
+  if (e.target === document.getElementById('done-overlay')) closeDoneModal();
+}
+
+// ── ERROR MODAL ──────────────────────────────────────────────────────────────
+function openErrorModal(elapsedMs) {
+  document.getElementById('error-code-label').textContent =
+    'ERR_CONFLICT · interrupted at ' + elapsedMs + 'ms';
+  document.getElementById('error-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (typeof addLog === 'function') addLog('s5-log', 'error', 'Error modal opened — interrupted at ' + elapsedMs + 'ms');
+}
+
+function closeErrorModal() {
+  document.getElementById('error-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  if (typeof addLog === 'function') addLog('s5-log', 'error', 'Error modal dismissed');
+}
+
+function handleErrorOverlayClick(e) {
+  if (e.target === document.getElementById('error-overlay')) closeErrorModal();
+}
+
+function retryAfterError() {
+  closeErrorModal();
+  // Reset state fully so user can start fresh
+  clearTimeout(s5timer);
+  s5inProgress = false;
+  const btn = document.getElementById('confirm-btn');
+  btn.classList.remove('loading');
+  btn.disabled = false;
+  const status = document.getElementById('s5-status');
+  status.className = 's5-status idle';
+  status.textContent = 'Awaiting action…';
+  if (typeof addLog === 'function') addLog('s5-log', 'retry', 'User retried after error');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeDoneModal();
+    closeErrorModal();
+  }
+});
+
+// ── SCENARIO 5 ──────────────────────────────────────────────────────────────
+let s5inProgress = false;
+let s5timer = null;
+let s5startTime = null;
+
+function s5log(ev, detail) {
+  if (typeof addLog === 'function') addLog('s5-log', ev, detail);
+}
+
+function s5confirm() {
+  if (s5inProgress) {
+    // Calculate how far into processing the user clicked
+    const elapsed = Math.round(performance.now() - s5startTime);
+    s5log('click', 'Interrupted at ' + elapsed + 'ms → ERROR');
+
+    // Cancel the in-flight timer and abort processing
+    clearTimeout(s5timer);
+    s5inProgress = false;
+    const btn = document.getElementById('confirm-btn');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    document.getElementById('s5-status').className = 's5-status error';
+    document.getElementById('s5-status').textContent = '✕ Error: action interrupted.';
+
+    // Show error modal
+    openErrorModal(elapsed);
+    return;
+  }
+
+  s5inProgress = true;
+  s5startTime = performance.now();
+  const btn    = document.getElementById('confirm-btn');
+  const status = document.getElementById('s5-status');
+
+  const delay = 1500 + Math.random() * 1500;
+
+  // CSS variable makes progress bar animation match the real delay exactly
+  btn.style.setProperty('--s5-delay', Math.round(delay) + 'ms');
+  btn.classList.add('loading');
+  btn.disabled = false; // keep enabled so mid-process clicks are catchable
+
+  status.className = 's5-status processing';
+  status.textContent = 'Processing…';
+  s5log('click', 'Confirm → processing started (' + Math.round(delay) + 'ms delay)');
+
+  s5timer = setTimeout(() => {
+    s5inProgress = false;
+    btn.classList.remove('loading');
+    btn.disabled = false;
+
+    status.className = 's5-status success';
+    status.textContent = '✓ Selection confirmed.';
+    s5log('resolve', 'Action completed after ' + Math.round(delay) + 'ms');
+
+    openDoneModal(Math.round(delay));
+  }, delay);
+}
+
+function s5reset() {
+  clearTimeout(s5timer);
+  s5inProgress = false;
+  s5startTime = null;
+  const btn = document.getElementById('confirm-btn');
+  btn.classList.remove('loading');
+  btn.disabled = false;
+  const status = document.getElementById('s5-status');
+  status.className = 's5-status idle';
+  status.textContent = 'Awaiting action…';
+  closeDoneModal();
+  closeErrorModal();
+  if (typeof clearLog === 'function') clearLog('s5-log');
+}
+</script>
+
+<script src="/website-content/logger.js"></script>
+</body>
+</html>

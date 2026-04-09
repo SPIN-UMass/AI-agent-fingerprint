@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPIN Lab · UX Behavior Test Suite</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --border: #2a2a3f;
+    --accent: #e8ff47;
+    --accent2: #7b5cf0;
+    --accent3: #ff4f6e;
+    --text: #e0e0f0;
+    --text-muted: #6b6b8a;
+    --success: #3dffa0;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* Subtle grid bg */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232,255,71,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,255,71,0.015) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────────────────────────── */
+  header {
+    padding: 2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .lab-badge {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: var(--accent);
+    color: #000;
+    padding: 3px 8px;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+  }
+
+  header h1 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  header p {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  /* ── NAV ────────────────────────────────────────────────────────────────── */
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 3rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    overflow-x: auto;
+  }
+
+  .nav-tab {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+    user-select: none;
+    text-decoration: none;
+    display: block;
+  }
+
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── HERO ───────────────────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    padding: 5rem 3rem 4rem;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-title {
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  .hero-title .dim { color: var(--text-muted); }
+
+  .hero-desc {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+    max-width: 560px;
+  }
+
+  @media (max-width: 640px) {
+    .hero { padding: 3rem 1.5rem 2rem; }
+    header { padding: 1.5rem; }
+    .nav-tabs { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ────────────────────────────────────────────────────────────── -->
+<header>
+  <span class="lab-badge">LAB</span>
+  <h1>UX Behavior Test Suite</h1>
+  <p>8 scenarios</p>
+</header>
+
+<!-- ── NAV ───────────────────────────────────────────────────────────────── -->
+<nav class="nav-tabs">
+  <a class="nav-tab active" href="index.html">Overview</a>
+  <a class="nav-tab" href="subscribe-v1.html">V1 · Subscription Button</a>
+  <a class="nav-tab" href="subscribe-v2.html">V2 · Subscription Button</a>
+  <a class="nav-tab" href="subscribe-v3.html">V3 · Subscription Button</a>
+  <a class="nav-tab" href="s2-scroll-gate.html">S2 · Scroll Gate</a>
+  <a class="nav-tab" href="s3-hover-reveal.html">S3 · Hover Reveal</a>
+  <a class="nav-tab" href="s4-dom-mismatch.html">S4 · DOM Mismatch</a>
+  <a class="nav-tab" href="s5-delayed-feedback.html">S5 · Delayed Feedback</a>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-eyebrow">SPIN Lab · Interaction Research</div>
+  <h2 class="hero-title">
+    Behavioral signals,<br>
+    <span class="dim">captured silently.</span>
+  </h2>
+  <p class="hero-desc">
+    A controlled suite of UX scenarios designed to record how users
+    navigate, hesitate, and decide.
+  </p>
+</div>
+
+<script src="/website-content/logger.js"></script>
+</body>
+</html>
