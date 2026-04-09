@@ -5,12 +5,16 @@
  * pure, uncontaminated browser fingerprints during normal browsing.
  *
  * Strategy:
- *   - All events are buffered in memory (window.__sessionLog).
- *   - At page unload, one fire-and-forget sendBeacon POST is sent to
- *     /collect with the full session payload. sendBeacon does not block
- *     navigation and does not generate a visible mid-session request.
- *   - If sendBeacon is unavailable (rare), the buffer is silently dropped
- *     to preserve the no-mid-session-request guarantee.
+ *   - All events are buffered in memory.
+ *   - Buffer is flushed via sendBeacon (fire-and-forget, no blocking) when:
+ *       1. Page is closed / navigated away (beforeunload, pagehide)
+ *       2. Tab goes hidden (visibilitychange → hidden)
+ *       3. Buffer reaches MAX_BUFFER — flush and continue capturing
+ *   - Each flush drains the buffer completely, so multiple flushes per
+ *     session produce separate JSONL entries on the server, all sharing
+ *     the same sessionId for reassembly.
+ *   - If sendBeacon is unavailable, the buffer is silently dropped to
+ *     preserve the no-mid-session-request guarantee.
  *
  * Captured events:
  *   mousemove, mousedown, mouseup, click, dblclick, contextmenu
@@ -19,8 +23,8 @@
  *   input, change, focus, blur
  *   touchstart, touchend
  *   selectionchange
- *   page load/unload, visibilitychange
- *   custom (window.logEvent)
+ *   page load/unload/pagehide, visibilitychange
+ *   custom (window.logEvent, window.addLog)
  */
 
 (function () {
@@ -28,16 +32,17 @@
 
   // ── CONFIG ─────────────────────────────────────────────────────────────────
   var COLLECT_URL        = window.location.origin + '/collect';
-  var MOUSEMOVE_THROTTLE = 16;   // ms — ~60fps ceiling, keeps payload sane
-  var MAX_BUFFER         = 5000; // hard cap — drop oldest if exceeded
+  var MOUSEMOVE_THROTTLE = 16;    // ms — ~60fps ceiling, keeps payload sane
+  var MAX_BUFFER         = 5000;  // events — flush when reached, then continue
 
   // ── STATE ──────────────────────────────────────────────────────────────────
-  var buffer       = [];
-  var sessionId    = generateId();
-  var pageId       = document.title || window.location.pathname.split('/').pop() || 'unknown';
-  var t0           = Date.now();
-  var p0           = performance.now();
-  var lastMouseMs  = -Infinity;
+  var buffer      = [];
+  var flushSeq    = 0;            // increments each flush — for server reassembly
+  var sessionId   = generateId();
+  var pageId      = document.title || window.location.pathname.split('/').pop() || 'unknown';
+  var t0          = Date.now();
+  var p0          = performance.now();
+  var lastMouseMs = -Infinity;
 
   // ── HELPERS ────────────────────────────────────────────────────────────────
   function generateId() {
@@ -54,7 +59,8 @@
     return new Date(nowMs()).toISOString();
   }
 
-  /** Append one event to the in-memory buffer */
+  // ── RECORD ─────────────────────────────────────────────────────────────────
+  /** Append one event to the in-memory buffer. Flushes if buffer is full. */
   function record(type, data) {
     var entry = {
       t:       isoNow(),
@@ -71,36 +77,44 @@
       }
     }
 
-    // Ring-buffer: drop oldest when cap is hit
-    if (buffer.length >= MAX_BUFFER) {
-      buffer.shift();
-    }
     buffer.push(entry);
+
+    // Mid-session overflow flush — drains buffer, then capturing continues.
+    // Uses sendBeacon so it never blocks or adds a visible request mid-session.
+    if (buffer.length >= MAX_BUFFER) {
+      flush('buffer_full');
+    }
   }
 
-  // ── FLUSH (unload only) ───────────────────────────────────────────────────
+  // ── FLUSH ──────────────────────────────────────────────────────────────────
   /**
-   * Called once at beforeunload. Uses sendBeacon so the browser completes
-   * the POST even as the page is torn down, without blocking navigation.
-   * This is the ONLY outbound request the logger ever makes.
+   * Drain the buffer and POST it via sendBeacon.
+   * Safe to call multiple times — each call sends whatever is in the buffer
+   * at that moment and resets it. All payloads share the same sessionId so
+   * the server can reassemble a full session from multiple entries.
+   *
+   * @param {string} reason  'unload' | 'pagehide' | 'hidden' | 'buffer_full' | 'manual'
    */
-  var flushed = false;
-
-  function flushOnUnload() {
-    if (flushed || buffer.length === 0) return;
+  function flush(reason) {
+    if (buffer.length === 0) return;
     if (!navigator.sendBeacon) return;
 
-    flushed = true; // prevent double-send
+    flushSeq += 1;
 
     var payload = JSON.stringify({
-      session:    sessionId,
-      page:       pageId,
-      userAgent:  navigator.userAgent,
-      eventCount: buffer.length,
-      batch:      buffer.splice(0, buffer.length)
+      session:     sessionId,
+      page:        pageId,
+      userAgent:   navigator.userAgent,
+      flushSeq:    flushSeq,      // 1 = first flush, 2 = second, etc.
+      flushReason: reason,        // why this flush was triggered
+      eventCount:  buffer.length,
+      batch:       buffer.splice(0, buffer.length)  // drain — buffer is now []
     });
 
-    navigator.sendBeacon(COLLECT_URL, new Blob([payload], { type: 'application/json' }));
+    navigator.sendBeacon(
+      COLLECT_URL,
+      new Blob([payload], { type: 'application/json' })
+    );
   }
 
   // ── PAGE LIFECYCLE ────────────────────────────────────────────────────────
@@ -114,21 +128,25 @@
     });
   });
 
+  // beforeunload — fires on navigation and tab close in most browsers
   window.addEventListener('beforeunload', function () {
     record('page', { action: 'unload' });
-    flushOnUnload();
+    flush('unload');
   });
 
+  // pagehide — most reliable cross-browser session-end signal,
+  // fires even when beforeunload is skipped (bfcache, window close)
+  window.addEventListener('pagehide', function () {
+    record('page', { action: 'pagehide' });
+    flush('pagehide');
+  });
+
+  // visibilitychange — catches tab switching, mobile backgrounding
   document.addEventListener('visibilitychange', function () {
     record('visibility', { state: document.visibilityState });
     if (document.visibilityState === 'hidden') {
-      flushOnUnload();
+      flush('hidden');
     }
-  });
-
-  window.addEventListener('pagehide', function () {
-    record('page', { action: 'pagehide' });
-    flushOnUnload();
   });
 
   // ── MOUSE ─────────────────────────────────────────────────────────────────
@@ -162,8 +180,12 @@
   // ── KEYBOARD ──────────────────────────────────────────────────────────────
   document.addEventListener('keydown', function (e) {
     record('keydown', {
-      key: e.key, code: e.code,
-      ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey, meta: e.metaKey,
+      key:   e.key,
+      code:  e.code,
+      ctrl:  e.ctrlKey,
+      shift: e.shiftKey,
+      alt:   e.altKey,
+      meta:  e.metaKey,
       target: desc(e.target)
     });
   });
@@ -176,10 +198,10 @@
   document.addEventListener('scroll', function (e) {
     var el = e.target === document ? document.documentElement : e.target;
     record('scroll', {
-      scrollX:      window.scrollX,
-      scrollY:      window.scrollY,
-      elScrollTop:  el.scrollTop || 0,
-      target:       desc(e.target)
+      scrollX:     window.scrollX,
+      scrollY:     window.scrollY,
+      elScrollTop: el.scrollTop || 0,
+      target:      desc(e.target)
     });
   }, { passive: true, capture: true });
 
@@ -236,7 +258,7 @@
 
   /**
    * Compatibility shim: older scenario pages call addLog(logId, event, detail).
-   * We map this to a generic app_event record so no scenario code needs changing.
+   * Mapped to a generic app_event record — no scenario HTML needs changing.
    */
   window.addLog = function (logId, eventType, detail) {
     record('app_event', { logId: logId, event: eventType, detail: detail });
@@ -246,11 +268,12 @@
     record('app_event', { logId: logId, event: 'clear', detail: 'log cleared' });
   };
 
-  /** Internal inspection — not used in production */
+  /** Exposed for DevTools debugging */
   window.__sessionLog = {
     getBuffer:  function () { return buffer.slice(); },
+    getSeq:     function () { return flushSeq; },
     sessionId:  sessionId,
-    flushNow:   flushOnUnload   // manual trigger for debugging
+    flushNow:   function () { flush('manual'); }
   };
 
   // ── TARGET DESCRIPTOR ────────────────────────────────────────────────────
