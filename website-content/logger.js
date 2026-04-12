@@ -63,8 +63,8 @@
   /** Append one event to the in-memory buffer. Flushes if buffer is full. */
   function record(type, data) {
     var entry = {
-      t:       isoNow(),
-      ms:      nowMs(),
+      t:       isoNow(), // date time
+      ms:      nowMs(),  // unix time
       session: sessionId,
       page:    pageId,
       type:    type

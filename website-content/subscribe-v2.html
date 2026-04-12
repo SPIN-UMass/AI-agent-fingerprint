@@ -195,7 +195,7 @@
   #email-input:focus { border-color: var(--accent2); }
   #email-input.invalid { border-color: var(--error); }
 
-    #submit-btn {
+    #dummy-btn {
     width: 134.765625px;
     height: 44px;
     font-family: var(--sans);
@@ -215,7 +215,7 @@
     box-sizing: border-box;
   }
 
-  #submit-btn:hover { background: #9370f8; border-color: #9370f8; }
+  #dummy-btn:hover { background: #9370f8; border-color: #9370f8; }
 
   .error-msg {
     font-family: var(--mono);
@@ -315,6 +315,7 @@
 </header>
 
 <nav class="nav-tabs">
+  <a class="nav-tab" href="index.html">Overview</a>
   <a class="nav-tab" href="subscribe-v1.html">V1 · Subscription Button</a>
   <a class="nav-tab active" href="subscribe-v2.html">V2 · Subscription Button</a>
   <a class="nav-tab" href="subscribe-v3.html">V3 · Subscription Button</a>
@@ -343,7 +344,7 @@
           onkeydown="if(event.key==='Enter') s1log('keypress','Enter - v2')"
         />
         <!-- Visually identical to V1 but onclick does nothing -->
-        <button id="submit-btn" onclick="s1log('click','Subscribe - v2')">Subscribe</button>
+        <button id="dummy-btn" onclick="s1log('click','Subscribe - v2')">Subscribe</button>
       </div>
       <span class="error-msg" id="error-msg"></span>
     </div>
