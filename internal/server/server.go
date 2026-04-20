@@ -31,43 +31,50 @@ func Run(ctx context.Context, cfg Config) error {
 	}
 	defer logger.Close()
 
-	// TLS config
-	cert, err := tls.LoadX509KeyPair(cfg.CertFile, cfg.KeyFile)
-	if err != nil {
-		return fmt.Errorf("load TLS cert: %w", err)
-	}
-
-	tlsConf := &tls.Config{
-		Certificates: []tls.Certificate{cert},
-		NextProtos:   []string{"h2", "http/1.1"},
-	}
-
 	// ── Router ───────────────────────────────────────────────────────────────
-	//
-	// /collect  — receives sendBeacon payloads from logger.js (POST only).
-	//             Written to interactions-YYYY-MM-DD.jsonl in LogDir.
-	//             This endpoint is still wrapped by LoggingHandler so the
-	//             HTTP/TLS fingerprint of the final unload request is also
-	//             captured — useful for comparing against mid-session requests.
-	//
-	// /*        — serves static website-content files.
-	//
 	mux := http.NewServeMux()
-	mux.Handle("/collect", CollectHandler(cfg.LogDir))
+	mux.Handle("/collect", CollectHandler(logger))
 	mux.Handle("/", content.Handler(cfg.ContentDir))
 
-	// Wrap the whole mux with fingerprint logging
 	handler := LoggingHandler(mux, logger)
 
-	// Start HTTP → HTTPS redirect server
-	if cfg.HTTPAddr != "" {
-		go runHTTPRedirect(cfg.HTTPAddr, cfg.HTTPSAddr)
+	// ── HTTPS SERVER ─────────────────────────────────────────────────────────
+	tlsConf := &tls.Config{
+		MinVersion: tls.VersionTLS12,
+		NextProtos: []string{"h2", "http/1.1"},
 	}
 
-	// Start fingerproxy HTTPS server
-	server := proxyserver.NewServer(ctx, handler, tlsConf)
+	httpsServer := &http.Server{
+		Addr:      cfg.HTTPSAddr,
+		Handler:   handler,
+		TLSConfig: tlsConf,
+	}
+
+	// ── HTTP REDIRECT SERVER ────────────────────────────────────────────────
+	if cfg.HTTPAddr != "" {
+		go func() {
+			log.Printf("HTTP redirect server listening on %s", cfg.HTTPAddr)
+			err := http.ListenAndServe(cfg.HTTPAddr, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				target := "https://" + r.Host + r.URL.RequestURI()
+				http.Redirect(w, r, target, http.StatusMovedPermanently)
+			}))
+			if err != nil {
+				log.Printf("HTTP redirect error: %v", err)
+			}
+		}()
+	}
+
+	// ── GRACEFUL SHUTDOWN ───────────────────────────────────────────────────
+	go func() {
+		<-ctx.Done()
+		log.Println("Shutting down servers...")
+		httpsServer.Shutdown(context.Background())
+	}()
+
 	log.Printf("HTTPS server listening on %s", cfg.HTTPSAddr)
-	return server.ListenAndServe(cfg.HTTPSAddr)
+
+	// 🔥 THIS is the key fix:
+	return httpsServer.ListenAndServeTLS(cfg.CertFile, cfg.KeyFile)
 }
 
 func runHTTPRedirect(listenAddr, httpsAddr string) {

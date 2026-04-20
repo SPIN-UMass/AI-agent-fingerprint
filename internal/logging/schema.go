@@ -1,6 +1,9 @@
 package logging
 
-import "time"
+import (
+    "encoding/json"
+    "time"
+)
 
 // RequestLog is the JSONL schema for each captured request.
 type RequestLog struct {
@@ -26,6 +29,27 @@ type RequestLog struct {
 	RequestReceived  time.Time `json:"request_received"`
 	ResponseSent     time.Time `json:"response_sent"`
 	ProcessingTimeMs float64   `json:"processing_time_ms"`
+}
+// InteractionLog is the JSONL schema for sendBeacon payloads from logger.js.
+type InteractionLog struct {
+	Session     string            `json:"session"`
+	Page        string            `json:"page"`
+	UserAgent   string            `json:"userAgent"`
+	FlushSeq    int               `json:"flushSeq"`
+	FlushReason string            `json:"flushReason"`
+	EventCount  int               `json:"eventCount"`
+	Batch       []json.RawMessage `json:"batch"`
+	ReceivedAt  time.Time         `json:"receivedAt"`
+}
+
+// BatchEvent is a minimal struct for inspecting individual events in the batch.
+type BatchEvent struct {
+	Type   string `json:"type"`
+	Target string `json:"target,omitempty"`
+	Value  string `json:"value,omitempty"`
+	Event  string `json:"event,omitempty"`
+	Detail string `json:"detail,omitempty"`
+	LogID  string `json:"logId,omitempty"`
 }
 
 type TLSInfo struct {

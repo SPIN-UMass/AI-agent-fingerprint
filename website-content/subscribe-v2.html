@@ -195,7 +195,7 @@
   #email-input:focus { border-color: var(--accent2); }
   #email-input.invalid { border-color: var(--error); }
 
-    #dummy-btn {
+  #dummy-btn {
     width: 134.765625px;
     height: 44px;
     font-family: var(--sans);
@@ -304,7 +304,7 @@
   /* Event log hidden from UI — logs saved silently in memory */
   .event-log, .event-log-title, .reset-btn { display: none !important; }
 
-  </style>
+</style>
 </head>
 <body>
 
@@ -343,8 +343,7 @@
           oninput="s1onInput()"
           onkeydown="if(event.key==='Enter') s1log('keypress','Enter - v2')"
         />
-        <!-- Visually identical to V1 but onclick does nothing -->
-        <button id="dummy-btn" onclick="s1log('click','Subscribe - v2')">Subscribe</button>
+        <button id="dummy-btn" onclick="s1logInput()">Subscribe</button>
       </div>
       <span class="error-msg" id="error-msg"></span>
     </div>
@@ -369,6 +368,13 @@ function s1log(ev, detail) { addLog('s1-log', ev, detail); }
 function s1onInput() {
   const input = document.getElementById('email-input');
   s1log('input', input.value || '(empty)');
+}
+
+function s1logInput() {
+  const input = document.getElementById('email-input');
+  const val = input.value.trim();
+  s1log('click', 'Subscribe - v2');
+  s1log('input_on_submit', val || '(empty)');
 }
 
 function s1reset() {

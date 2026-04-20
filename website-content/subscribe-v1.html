@@ -396,6 +396,7 @@ function s1submit() {
     s1log('submit', 'BLOCKED — invalid: ' + val);
     return;
   }
+  s1log('input', val);                        // ← added: logs the input value
   s1log('submit', '✓ Subscribed: ' + val);
   showToast('✓ Subscribed: ' + val);
   input.value = '';

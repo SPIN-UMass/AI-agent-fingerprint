@@ -13,8 +13,8 @@ import (
 func main() {
 	httpsAddr := flag.String("https", ":443", "HTTPS listen address")
 	httpAddr := flag.String("http", ":80", "HTTP redirect listen address (empty to disable)")
-	certFile := flag.String("cert", "tls.crt", "TLS certificate file")
-	keyFile := flag.String("key", "tls.key", "TLS private key file")
+	certFile := flag.String("cert", "/etc/letsencrypt/live/uxbehaviorsuite.com/fullchain.pem", "TLS certificate file")
+	keyFile := flag.String("key", "/etc/letsencrypt/live/uxbehaviorsuite.com/privkey.pem", "TLS private key file")
 	logDir := flag.String("log-dir", "logs", "Directory for JSONL log files")
 	contentDir := flag.String("content-dir", "website-content", "Directory to serve static files from (empty for default page)")
 	flag.Parse()

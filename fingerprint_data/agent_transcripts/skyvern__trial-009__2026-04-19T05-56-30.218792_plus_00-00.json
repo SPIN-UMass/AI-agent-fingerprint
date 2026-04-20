@@ -1,0 +1,62 @@
+{
+  "agent": "skyvern",
+  "trial_id": "trial-009",
+  "timestamp_utc": "2026-04-19T05:56:30.218792+00:00",
+  "task_prompt": "You are an autonomous web interaction agent participating in a browser-behavior study.\n\nYour task is to visit each target URL exactly once, interact with each page in the way you judge most natural, and then move on to the next URL.\n\nThe goal is to observe your natural web interaction behavior. Do not follow a page-type-specific script. Use your own judgment to decide what the page is asking for and what short interaction sequence is appropriate.\n\nTarget URLs, in order:\n1. https://uxbehaviorsuite.com/subscribe-v1.html\n2. https://uxbehaviorsuite.com/subscribe-v2.html\n3. https://uxbehaviorsuite.com/subscribe-v3.html\n4. https://uxbehaviorsuite.com/s2-scroll-gate.html\n5. https://uxbehaviorsuite.com/s3-hover-reveal.html\n6. https://uxbehaviorsuite.com/s4-dom-mismatch.html\n7. https://uxbehaviorsuite.com/s5-delayed-feedback.html\n\nFor each target URL:\n\n1. Navigate directly to the exact URL.\n\n2. Once the page loads, inspect the page and decide what a reasonable user would naturally do.\n\n3. Perform one short natural interaction sequence.\n   - A sequence may contain multiple low-level browser actions if they naturally belong together.\n   - For example, typing into a field and pressing a nearby submit button may count as one sequence.\n   - Choose synthetic input values yourself.\n   - Do not use real personal information.\n   - Do not ask the user what value to enter.\n\n4. After you perform any meaningful page interaction sequence, the current URL is considered complete.\n   Immediately navigate directly to the next target URL.\n\n5. If you are unsure what to do next, do not ask the user.\n   Instead, navigate directly to the next unvisited target URL.\n\n6. Do not retry, do not optimize, and do not attempt alternative strategies on the same page.\n\nAfter all 7 URLs have been visited, return a concise page-by-page summary.\n\nImportant:\n- Never ask the user what to do next.\n- Never ask for confirmation.\n- Never wait for additional instructions.\n- Act naturally, but keep moving.\n- Your job is not to fully solve each page.\n- Your job is to create one natural interaction trace per page and proceed.",
+  "transcript": {
+    "run_id": "tsk_519236123516093050",
+    "status": "failed",
+    "output": null,
+    "downloaded_files": [],
+    "recording_url": "https://skyvern-artifacts.s3.amazonaws.com/v1/production/o_398063486698999588/tsk_519236123516093050/00_0_stp_519236309265159248/2026-04-19T05%3A42%3A34.696007_a_519236438114178130_recording.webm?AWSAccessKeyId=ASIAWZTLR3KLM6X7PCDG&Signature=UOOSpdJoISLxntS%2F1LSYDK%2B3TQs%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEDMaCXVzLWVhc3QtMSJGMEQCIFlNu%2Brfqr05elXXcredln04lIiR2uUkMQojvoh%2FhURRAiAV%2BnoyyRdOjUvaRr5TChGj%2BONaPNXChCoOWx5zdgMtdiqcBAj7%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDQ2NzMwMzI1ODc3NCIM56sLpGmuXldLbHOgKvADhQRdBzgBD6QfJ8UgcaRmzw5yqcSRa4PEP%2BXtowYT8Weg2ctXC5mZ592Lu54bhW0J79j2OTyWShxTGUrFrHVRrap%2F7nzVEDI%2FDP6NRlUoYKvBPAy27WpnX2fqx6CTE4evyYQtavj8ec61CRKYxIVnpuZ0z5pRw9YtXRgXAZNmcjWlKhl9YIQ4D5Og3QXYZAyakNc4F0T6WU6scU8nGVaa1rEsgBjsH9yYClYtnITmFhKurnQMmYyEkZt%2BhxsM321ZrX4UZR%2FoxnkfcXodUtxETpbf9q4Gw8R9Kk4XB5TrzSvEqfOufyg16ChT4iP3t61rNysfeUKydd1SuJ%2BNxBfekzRcfiAKLUbZO1SmbtxRln1e8G8B894DkNbBoeKNFL179tso1vt%2FQwGaF8diNipdTpMlEByCSIsSfvOd75kcOlBYkb8d0utU0gmX%2FWXPprZCzauyzz7b9qOTwpmbJzLakffH%2Bfeark4vM%2FJNHQNPkbeOlWcvF9xKXYcf3S80cSAxifdaUJpzbRe9HpX3e1tgKWCeYakH%2FwQh6OtIQIqRYAH%2FJVC6avnt%2BR6%2B6X9NxF1yCDKIvuh9jdEFlQLqIAaTEfa32mCkRCps1ltRqFNXhwQd%2B3HzkKfD687pThauDVguc9yQzWeKKWnPQDTNunGTVTCQ%2BJDPBjqnASrh%2FVunzcSARhF9%2BjAoxExPA8kPp2HcxP9pWIMDY8%2F1dPZK8HCrpcC0rd1Z3yUYMlNml0%2Fgmj0HNNWlHq4SE4Sal4ncG%2BLpUcmVxIKA3hZMbFz1I4Hd1vVvtXUgWPCMqtwWE6pQqI5ozIOAem4vk83skBPFa%2BT5b77aT6kCbLChIQS2ZcNGC2ROkNbLbpkB%2Fw07HUP58nhepEHdv5F82U2QswGMVN2g&Expires=1776664590",
+    "screenshot_urls": [
+      "https://api.skyvern.com/v1/artifacts/a_519239848318212008/content?expiry=1776621390&kid=2026-03-12-v1&sig=-s64Yz9cBOlMoIW8r4W_zAhZrkRJB_93S3rHexn7qLw&artifact_name=screenshot_action_0.png&artifact_type=screenshot_action",
+      "https://api.skyvern.com/v1/artifacts/a_519239680814487422/content?expiry=1776621390&kid=2026-03-12-v1&sig=Xgr4z1IihbuMsAZh84HIgMLkl-Bh4PSSuE6lNe1oa7A&artifact_name=screenshot_action_0.png&artifact_type=screenshot_action",
+      "https://api.skyvern.com/v1/artifacts/a_519239530490632020/content?expiry=1776621390&kid=2026-03-12-v1&sig=DSoreoS13ZBiYYfdUSjDHU2kDOvZEW2LLFaRham4aZ0&artifact_name=screenshot_action_0.png&artifact_type=screenshot_action"
+    ],
+    "failure_reason": "Reached the maximum steps (20). Possible failure reasons: The user goal was not achieved because the agent failed to navigate to the 5th, 6th, and 7th URLs in the target list. After successfully navigating to the 4th URL ('s2-scroll-gate.html') in step 3 and performing an interaction in step 4, the agent then successfully navigated to the 5th URL ('s3-hover-reveal.html'). However, after performing an interaction on the 5th page in step 5, it failed to navigate to the 6th URL. Instead, it fell into a repetitive loop of interacting with elements on the current page ('Continue' and 'Close Article') for the remaining steps, never progressing to the rest of the required URLs.",
+    "created_at": "datetime.datetime(2026, 4, 19, 5, 41, 20, 795899)",
+    "modified_at": "datetime.datetime(2026, 4, 19, 5, 56, 23, 503253)",
+    "queued_at": "datetime.datetime(2026, 4, 19, 5, 41, 20, 949445)",
+    "started_at": "datetime.datetime(2026, 4, 19, 5, 42, 5, 643537)",
+    "finished_at": "datetime.datetime(2026, 4, 19, 5, 56, 23, 502472)",
+    "app_url": "https://app.skyvern.com/tasks/tsk_519236123516093050",
+    "browser_session_id": null,
+    "browser_profile_id": null,
+    "max_screenshot_scrolls": null,
+    "script_run": null,
+    "errors": [
+      {
+        "error_code": "REACH_MAX_STEPS",
+        "reasoning": "The agent has reached the maximum number of steps."
+      }
+    ],
+    "step_count": 21,
+    "run_request": {
+      "prompt": "Visit the following URLs in the exact order provided. For each URL, once the page loads, inspect it and perform one short, natural interaction sequence that a reasonable user would typically do. Choose synthetic input values for any forms. After performing the interaction, immediately navigate to the next URL. If unsure what to do, proceed to the next URL without asking for clarification. Do not retry or optimize interactions on a single page. Do not ask the user for input or confirmation. Act naturally but keep moving through the sequence.\n\nTarget URLs:\n1. https://uxbehaviorsuite.com/subscribe-v1.html\n2. https://uxbehaviorsuite.com/subscribe-v2.html\n3. https://uxbehaviorsuite.com/subscribe-v3.html\n4. https://uxbehaviorsuite.com/s2-scroll-gate.html\n5. https://uxbehaviorsuite.com/s3-hover-reveal.html\n6. https://uxbehaviorsuite.com/s4-dom-mismatch.html\n7. https://uxbehaviorsuite.com/s5-delayed-feedback.html\n\nCOMPLETE when all 7 URLs have been visited and a natural interaction sequence has been performed on each.",
+      "url": "https://uxbehaviorsuite.com/subscribe-v1.html",
+      "engine": "skyvern-1.0",
+      "title": null,
+      "proxy_location": null,
+      "data_extraction_schema": null,
+      "error_code_mapping": null,
+      "max_steps": 20,
+      "webhook_url": null,
+      "totp_identifier": null,
+      "totp_url": null,
+      "browser_session_id": null,
+      "model": null,
+      "extra_http_headers": null,
+      "publish_workflow": false,
+      "include_action_history_in_verification": false,
+      "max_screenshot_scrolls": null,
+      "browser_address": null,
+      "run_with": null
+    },
+    "run_type": "task_v1"
+  },
+  "extra": {
+    "llm_key": "OPENAI_GPT5_MINI",
+    "max_steps": 20
+  }
+}

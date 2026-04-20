@@ -1,0 +1,57 @@
+{
+  "agent": "skyvern",
+  "trial_id": "trial-005",
+  "timestamp_utc": "2026-04-19T04:54:07.531326+00:00",
+  "task_prompt": "You are an autonomous web interaction agent participating in a browser-behavior study.\n\nYour task is to visit each target URL exactly once, interact with each page in the way you judge most natural, and then move on to the next URL.\n\nThe goal is to observe your natural web interaction behavior. Do not follow a page-type-specific script. Use your own judgment to decide what the page is asking for and what short interaction sequence is appropriate.\n\nTarget URLs, in order:\n1. https://uxbehaviorsuite.com/subscribe-v1.html\n2. https://uxbehaviorsuite.com/subscribe-v2.html\n3. https://uxbehaviorsuite.com/subscribe-v3.html\n4. https://uxbehaviorsuite.com/s2-scroll-gate.html\n5. https://uxbehaviorsuite.com/s3-hover-reveal.html\n6. https://uxbehaviorsuite.com/s4-dom-mismatch.html\n7. https://uxbehaviorsuite.com/s5-delayed-feedback.html\n\nFor each target URL:\n\n1. Navigate directly to the exact URL.\n\n2. Once the page loads, inspect the page and decide what a reasonable user would naturally do.\n\n3. Perform one short natural interaction sequence.\n   - A sequence may contain multiple low-level browser actions if they naturally belong together.\n   - For example, typing into a field and pressing a nearby submit button may count as one sequence.\n   - Choose synthetic input values yourself.\n   - Do not use real personal information.\n   - Do not ask the user what value to enter.\n\n4. After you perform any meaningful page interaction sequence, the current URL is considered complete.\n   Immediately navigate directly to the next target URL.\n\n5. If you are unsure what to do next, do not ask the user.\n   Instead, navigate directly to the next unvisited target URL.\n\n6. Do not retry, do not optimize, and do not attempt alternative strategies on the same page.\n\nAfter all 7 URLs have been visited, return a concise page-by-page summary.\n\nImportant:\n- Never ask the user what to do next.\n- Never ask for confirmation.\n- Never wait for additional instructions.\n- Act naturally, but keep moving.\n- Your job is not to fully solve each page.\n- Your job is to create one natural interaction trace per page and proceed.",
+  "transcript": {
+    "run_id": "tsk_519222274961376938",
+    "status": "completed",
+    "output": null,
+    "downloaded_files": [],
+    "recording_url": "https://skyvern-artifacts.s3.amazonaws.com/v1/production/o_398063486698999588/tsk_519222274961376938/00_0_stp_519222287408861822/2026-04-19T04%3A48%3A07.272867_a_519222407667946112_recording.webm?AWSAccessKeyId=ASIAWZTLR3KLHWAC5JZD&Signature=b5gkYn4nHpwSAf5mpbkLukpHqKE%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEDQaCXVzLWVhc3QtMSJHMEUCIARejvt8hIvLx0YrR7Uy5Hj1aRfc24cHuiTZ4aO0GpQEAiEAtQYSzBPxtjo94UxaILWwgaE1jlYW6aRHunUfdKBuI%2B4qnAQI%2Ff%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARACGgw0NjczMDMyNTg3NzQiDOLFSBioEqRwNIoBUSrwA8e%2F2udmZtGhgcewkvXpbTX7i7r%2FOrcrBu2CUYy0dtfaAX0AiFl6b%2FJUqfFqz6qWNd8vI3g1OyT3CrHNnzUu7FANzNhG5kaJzW%2BLK1PAPYX8gNihnf5V4RLGhZdARUYyt6Sr6y61pPCDtSGhA7YcogXrLu2UQ9wl5GpRIT%2FK5YZHa7EuWj6jO4oSwdXpVXlqFBdDGWsTyrglfe6JGwF4XX%2B1I18PM%2FxuLruAL4ibl8uOi3MrKqhGZn6E2qjmKhaS6rw2NXKWOv1It17OdlCr1zTQnyEcGMEyKC7JdyyjKKDr6OqKi6s%2F741Ee2Tnfk4ErJvx80NBEqF0yu8SuqtlplWI40S%2FjoeFt3k3W4M1IqGcx6ZSf1crZISUbvyxpCVgJkt%2BVgpCvgDUc2KHxpjHQTQEOL0%2BMyfBcb9m0FLcRfJg1CFBCeDwh%2FUR0WviHfF%2FMVSAfPpaNwFoEYD4Qhq8qyaTcWwGGEZBg2rb%2ByJt4acFnSs2ifbnDtzFOLgJ1iinGgsMOuSoN%2FIVb20bzHD9uNMoI0lcVej%2BasbC9Az0O%2F06XiuBDI5jtbJAM84YQmmb%2B5egTHizwVggVuLTsd%2FkMcCQEQ3Hti8NNq1%2F85vGDdoipTkBVAK%2Ftcz3gtw3Iduh20IVwlNX2mGGUicl6%2BQAE7IwipyRzwY6pgHeKWejBPf2gF8q%2FEYe9%2FdHBoQo5ACxaq7aFBPOnpxqxm%2BBUwbfFO6jqOgfRCx4agtvQY9XYrRR4pDQkyyl6vORMW73APsM%2FDTZa%2BvOOe4eXCk7J5yzUi%2BmmIbYqM99vnhuq%2BB0WtbdHC2wusI1Uwgfsw7cPyTV87Qx%2Fwl%2FFuP0%2Fwk%2FF6ZqH0BMFNBZ6V4I2o%2FEB1bQfne5hjUwZVxZgBRyBDMBCSTO&Expires=1776660847",
+    "screenshot_urls": [
+      "https://api.skyvern.com/v1/artifacts/a_519223910906500048/content?expiry=1776617647&kid=2026-03-12-v1&sig=-ohy8JoSVI6fsdDsPS8lRsqhpSSpi9SxzmuK9JN64xs&artifact_name=screenshot_action_1.png&artifact_type=screenshot_action",
+      "https://api.skyvern.com/v1/artifacts/a_519223829302121398/content?expiry=1776617647&kid=2026-03-12-v1&sig=vUjvWUdG8YY7Yernr9RO4fnnOFmx5qIjnyojlnWyA_w&artifact_name=screenshot_action_0.png&artifact_type=screenshot_action",
+      "https://api.skyvern.com/v1/artifacts/a_519223674683298710/content?expiry=1776617647&kid=2026-03-12-v1&sig=J7ozys60YFht31TbWq4Y2y9Fe5nwJQj2CU82WDTYZm8&artifact_name=screenshot_action_0.png&artifact_type=screenshot_action"
+    ],
+    "failure_reason": null,
+    "created_at": "datetime.datetime(2026, 4, 19, 4, 47, 36, 130109)",
+    "modified_at": "datetime.datetime(2026, 4, 19, 4, 53, 59, 380427)",
+    "queued_at": "datetime.datetime(2026, 4, 19, 4, 47, 36, 271485)",
+    "started_at": "datetime.datetime(2026, 4, 19, 4, 47, 40, 504229)",
+    "finished_at": "datetime.datetime(2026, 4, 19, 4, 53, 59, 379713)",
+    "app_url": "https://app.skyvern.com/tasks/tsk_519222274961376938",
+    "browser_session_id": null,
+    "browser_profile_id": null,
+    "max_screenshot_scrolls": null,
+    "script_run": null,
+    "errors": [],
+    "step_count": 8,
+    "run_request": {
+      "prompt": "Visit the following URLs in the exact order provided. For each URL, once the page loads, inspect it and perform one short, natural interaction sequence that a reasonable user would typically do. Choose synthetic input values for any forms. After performing the interaction, immediately navigate to the next URL. If unsure what to do, proceed to the next URL without asking for clarification. Do not retry or optimize interactions on a single page. Do not ask the user for input or confirmation. Act naturally but keep moving through the sequence.\n\nTarget URLs:\n1. https://uxbehaviorsuite.com/subscribe-v1.html\n2. https://uxbehaviorsuite.com/subscribe-v2.html\n3. https://uxbehaviorsuite.com/subscribe-v3.html\n4. https://uxbehaviorsuite.com/s2-scroll-gate.html\n5. https://uxbehaviorsuite.com/s3-hover-reveal.html\n6. https://uxbehaviorsuite.com/s4-dom-mismatch.html\n7. https://uxbehaviorsuite.com/s5-delayed-feedback.html\n\nCOMPLETE when all 7 URLs have been visited and a natural interaction sequence has been performed on each.",
+      "url": "https://uxbehaviorsuite.com/subscribe-v1.html",
+      "engine": "skyvern-1.0",
+      "title": null,
+      "proxy_location": null,
+      "data_extraction_schema": null,
+      "error_code_mapping": null,
+      "max_steps": 20,
+      "webhook_url": null,
+      "totp_identifier": null,
+      "totp_url": null,
+      "browser_session_id": null,
+      "model": null,
+      "extra_http_headers": null,
+      "publish_workflow": false,
+      "include_action_history_in_verification": false,
+      "max_screenshot_scrolls": null,
+      "browser_address": null,
+      "run_with": null
+    },
+    "run_type": "task_v1"
+  },
+  "extra": {
+    "llm_key": "OPENAI_GPT5_MINI",
+    "max_steps": 20
+  }
+}
