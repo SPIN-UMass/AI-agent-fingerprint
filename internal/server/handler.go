@@ -20,7 +20,7 @@ import (
 // LoggingHandler wraps a content handler and logs fingerprint data for every request.
 func LoggingHandler(content http.Handler, logger *logging.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		received := time.Now()
+		received := time.Now().UTC()
 
 		entry := &logging.RequestLog{
 			ID:              uuid.NewString(),
@@ -49,7 +49,7 @@ func LoggingHandler(content http.Handler, logger *logging.Logger) http.Handler {
 		content.ServeHTTP(w, r)
 
 		// Timing
-		entry.ResponseSent = time.Now()
+		entry.ResponseSent = time.Now().UTC()
 		entry.ProcessingTimeMs = float64(entry.ResponseSent.Sub(received).Microseconds()) / 1000.0
 
 		// Write log entry
