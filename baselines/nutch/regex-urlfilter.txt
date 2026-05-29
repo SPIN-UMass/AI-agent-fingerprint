@@ -1,0 +1,22 @@
+# Nutch URL filter for the SPIN baseline smoke test.
+# Replaces the default conf/regex-urlfilter.txt (whose final rule is "+." = accept all).
+# We pin the crawl to quotes.toscrape.com so a 2-round crawl stays small and on-site
+# instead of wandering to external links (goodreads, zyte, etc.).
+
+# Skip file: ftp: and mailto: urls
+-^(file|ftp|mailto):
+
+# Skip image and other suffixes we can't yet parse
+-\.(gif|GIF|jpg|JPG|jpeg|JPEG|png|PNG|ico|ICO|css|CSS|sit|SIT|eps|EPS|wmf|WMF|zip|ZIP|ppt|PPT|mpg|MPG|xls|XLS|gz|GZ|rpm|RPM|tgz|TGZ|mov|MOV|exe|EXE|jpeg|JPEG|bmp|BMP|js|JS)$
+
+# Skip URLs containing certain characters as probable queries, etc.
+-[?*!@=]
+
+# Skip URLs with slash-delimited segment that repeats 3+ times, to break loops
+-.*(/[^/]+)/[^/]+\1/[^/]+\1/
+
+# Accept only the test host
++^https?://quotes\.toscrape\.com/
+
+# Reject anything else (keeps the crawl on-site)
+-.

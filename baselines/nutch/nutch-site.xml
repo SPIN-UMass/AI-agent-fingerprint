@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Site-specific overrides for the SPIN AI-agent-fingerprint Nutch baseline. -->
+<configuration>
+
+  <!--
+    REQUIRED. Nutch refuses to fetch unless http.agent.name is non-empty.
+    This single token is the identifying word in the User-Agent and is also
+    the name the robots.txt parser matches against (RFC 9309).
+  -->
+  <property>
+    <name>http.agent.name</name>
+    <value>SPIN-baseline-nutch</value>
+  </property>
+
+  <!--
+    Contact URL advertised in parentheses inside the User-Agent header.
+    Composed UA format (see lib-http HttpBase.getAgentString):
+      <agent.name>/<agent.version> (<agent.url>)
+    We deliberately do NOT override http.agent.version, so it keeps the
+    image default "Nutch-1.22-SNAPSHOT" -> the real sent UA is:
+      SPIN-baseline-nutch/Nutch-1.22-SNAPSHOT (https://github.com/SPIN-UMass/AI-agent-fingerprint)
+  -->
+  <property>
+    <name>http.agent.url</name>
+    <value>https://github.com/SPIN-UMass/AI-agent-fingerprint</value>
+  </property>
+
+  <!--
+    Use the OkHttp3 protocol plugin (the fingerprint study's target HTTP/TLS
+    stack: OkHttp3 over the JVM default JSSE TLS provider). This is the ONLY
+    change vs the image default plugin.includes, which ships protocol-http.
+  -->
+  <property>
+    <name>plugin.includes</name>
+    <value>protocol-okhttp|urlfilter-regex|parse-(html|tika)|index-(basic|anchor)|indexer-solr|scoring-opic|urlnormalizer-(pass|regex|basic)</value>
+  </property>
+
+  <!-- Be a polite, small crawl: 1s between requests, single fetch thread. -->
+  <property>
+    <name>fetcher.server.delay</name>
+    <value>1.0</value>
+  </property>
+  <property>
+    <name>fetcher.threads.per.queue</name>
+    <value>1</value>
+  </property>
+
+  <!-- Keep generated batches tiny so the smoke test stays fast. -->
+  <property>
+    <name>generate.max.count</name>
+    <value>5</value>
+  </property>
+
+</configuration>

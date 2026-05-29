@@ -1,0 +1,38 @@
+# Baseline crawler setup: commit configs + run scripts + READMEs only.
+# Everything below is a build/run artifact and must NOT be committed.
+
+# --- crawl output / captured artifacts ---
+output/
+crawls/
+crawl-data/
+jobs/
+data/
+*.warc
+*.warc.gz
+*.wacz
+*.jl
+*.jsonl
+*.csv
+
+# --- logs ---
+logs/
+*.log
+
+# --- Python / Scrapy ---
+.venv/
+venv/
+__pycache__/
+*.pyc
+.scrapy/
+httpcache/
+
+# --- downloaded/unpacked installs (use Docker or nix instead of vendoring) ---
+dist/
+heritrix-*/
+apache-nutch-*/
+*.zip
+*.tar.gz
+
+# --- editor / OS cruft ---
+.DS_Store
+.ipynb_checkpoints/
