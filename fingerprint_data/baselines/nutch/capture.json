@@ -1,0 +1,110 @@
+{
+  "crawler": "nutch",
+  "tool": "Apache Nutch 1.22 (Java, protocol-okhttp/OkHttp3, JSSE)",
+  "target": "https://uxbehaviorsuite.com/",
+  "capture_server": {
+    "domain": "uxbehaviorsuite.com",
+    "ip": "13.220.53.174",
+    "process": "agent-scraper (fingerproxy-based)",
+    "source_log": "/home/ubuntu/app/logs/requests-2026-05-31.jsonl"
+  },
+  "crawl_window_utc": {
+    "start": "2026-05-31T23:17:36Z",
+    "end": "2026-05-31T23:18:48Z"
+  },
+  "record_window_utc": {
+    "min": "2026-05-31T23:18:06.887664159Z",
+    "max": "2026-05-31T23:18:24.569511544Z"
+  },
+  "run_command": "TARGET_URL=https://uxbehaviorsuite.com/ ./run.sh",
+  "user_agents_observed": [
+    "SPIN-baseline-nutch/Nutch-1.22-SNAPSHOT (https://github.com/SPIN-UMass/AI-agent-fingerprint)"
+  ],
+  "request_count": 8,
+  "interaction_count": 0,
+  "interaction_note": "Traditional crawler: no JS engine, so logger.js never runs and no interaction events are produced.",
+  "tls": {
+    "ja3_hashes": [
+      "25e40fc2c32a0186e362a303c5f18fb2"
+    ],
+    "ja4_hashes": [
+      "t13d1513h1_8daaf6152771_0c2151eeb530"
+    ]
+  },
+  "http": {
+    "protocols": [
+      "HTTP/1.1"
+    ],
+    "http2_akamai_fingerprints": [
+      ""
+    ],
+    "header_orderings": [
+      {
+        "order": [
+          "Accept",
+          "Accept-Language",
+          "Accept-Charset",
+          "Accept-Encoding",
+          "Connection",
+          "User-Agent"
+        ],
+        "requests": 3
+      },
+      {
+        "order": [
+          "Connection",
+          "User-Agent",
+          "Accept",
+          "Accept-Language",
+          "Accept-Charset",
+          "Accept-Encoding"
+        ],
+        "requests": 2
+      },
+      {
+        "order": [
+          "Accept-Charset",
+          "Accept-Encoding",
+          "Connection",
+          "User-Agent",
+          "Accept",
+          "Accept-Language"
+        ],
+        "requests": 1
+      },
+      {
+        "order": [
+          "User-Agent",
+          "Accept",
+          "Accept-Language",
+          "Accept-Charset",
+          "Accept-Encoding",
+          "Connection"
+        ],
+        "requests": 1
+      },
+      {
+        "order": [
+          "Accept-Encoding",
+          "Connection",
+          "User-Agent",
+          "Accept",
+          "Accept-Language",
+          "Accept-Charset"
+        ],
+        "requests": 1
+      }
+    ],
+    "paths_fetched": {
+      "/": 1,
+      "/robots.txt": 2,
+      "/s4-dom-mismatch.html": 1,
+      "/s5-delayed-feedback.html": 1,
+      "/subscribe-v1.html": 1,
+      "/subscribe-v2.html": 1,
+      "/subscribe-v3.html": 1
+    }
+  },
+  "source_jsonl": "requests.jsonl",
+  "coverage_note": "Path coverage is bounded by the RUN CONFIG (topN=5 x 2 rounds), not by Nutch's reach: root + 5 sub-pages were fetched; s2-scroll-gate.html, s3-hover-reveal.html and index.html were not reached in this run. The TLS/header fingerprint is per-connection and fully captured regardless. Raise -topN / add rounds for full coverage."
+}

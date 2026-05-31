@@ -1,0 +1,82 @@
+{
+  "crawler": "heritrix",
+  "tool": "Heritrix 3.15.0 (Java 17, Apache HttpClient, JSSE)",
+  "target": "https://uxbehaviorsuite.com/",
+  "capture_server": {
+    "domain": "uxbehaviorsuite.com",
+    "ip": "13.220.53.174",
+    "process": "agent-scraper (fingerproxy-based)",
+    "source_log": "/home/ubuntu/app/logs/requests-2026-05-31.jsonl"
+  },
+  "crawl_window_utc": {
+    "start": "2026-05-31T23:15:50Z",
+    "end": "2026-05-31T23:16:30Z"
+  },
+  "record_window_utc": {
+    "min": "2026-05-31T23:16:11.220207026Z",
+    "max": "2026-05-31T23:16:27.042950742Z"
+  },
+  "run_command": "TARGET_URL=https://uxbehaviorsuite.com/ DWELL_SECONDS=60 ./run.sh",
+  "user_agents_observed": [
+    "Mozilla/5.0 (compatible; heritrix/3.15.0 +https://example.org/SPIN-baseline)"
+  ],
+  "request_count": 6,
+  "interaction_count": 0,
+  "interaction_note": "Traditional crawler: no JS engine, so logger.js never runs and no interaction events are produced.",
+  "tls": {
+    "ja3_hashes": [
+      "57128db24fb3c2fc035d6a39ccb08cac",
+      "adbab9d5752f7c834ec405ec92e46415"
+    ],
+    "ja4_hashes": [
+      "t13d311200_1d947a95fc68_7e1102d2036b",
+      "t13d311300_1d947a95fc68_d6a918353cf0"
+    ]
+  },
+  "http": {
+    "protocols": [
+      "HTTP/1.0"
+    ],
+    "http2_akamai_fingerprints": [
+      ""
+    ],
+    "header_orderings": [
+      {
+        "order": [
+          "Connection",
+          "Referer",
+          "Accept",
+          "User-Agent"
+        ],
+        "requests": 3
+      },
+      {
+        "order": [
+          "Connection",
+          "Accept",
+          "User-Agent"
+        ],
+        "requests": 2
+      },
+      {
+        "order": [
+          "Referer",
+          "Accept",
+          "User-Agent",
+          "Connection"
+        ],
+        "requests": 1
+      }
+    ],
+    "paths_fetched": {
+      "/": 1,
+      "/favicon.ico": 1,
+      "/index.html": 1,
+      "/logger.js": 1,
+      "/robots.txt": 1,
+      "/subscribe-v1.html": 1
+    }
+  },
+  "source_jsonl": "requests.jsonl",
+  "coverage_note": "Path coverage is bounded by the RUN SCRIPT, not by Heritrix's reach: run.sh early-stops as soon as >=2 followed (L-path) links are confirmed, so only root + robots.txt + logger.js (embed) + favicon.ico + index.html (301) + subscribe-v1.html were fetched; s2-s5 and subscribe-v2/v3 were never requested. The TLS/header fingerprint is per-connection and fully captured regardless. Raise DWELL_SECONDS / remove the early-stop for full coverage."
+}
