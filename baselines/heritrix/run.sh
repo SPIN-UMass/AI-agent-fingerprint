@@ -25,6 +25,14 @@ CURL=(curl -ksS --anyauth -u admin:admin --location)
 
 DWELL_SECONDS="${DWELL_SECONDS:-40}"
 
+# Crawl target. Defaults to the public quotes sandbox; override to point the
+# baseline at the study's fingerprint server:
+#   TARGET_URL=https://uxbehaviorsuite.com/ ./run.sh
+TARGET_URL="${TARGET_URL:-https://quotes.toscrape.com/}"
+# Bare host, plus a regex-safe form (dots escaped) for the crawl.log greps.
+TARGET_DOMAIN="$(printf '%s' "${TARGET_URL}" | sed -E 's#^[a-z]+://##; s#/.*$##')"
+TARGET_DOMAIN_RE="$(printf '%s' "${TARGET_DOMAIN}" | sed 's/\./\\./g')"
+
 log() { printf '\n=== %s ===\n' "$*"; }
 
 cleanup() {
@@ -49,8 +57,13 @@ log "Starting Heritrix container"
 docker run -d --name "${CONTAINER}" -p 8443:8443 "${IMAGE}" >/dev/null
 
 # Copy our job config into the container at the canonical jobs/<JOB>/ path.
+# Render TARGET_URL into the seed so the committed beans file stays pinned to
+# the public sandbox; only the in-container job sees the live target.
 docker exec "${CONTAINER}" mkdir -p "/opt/heritrix/jobs/${JOB}"
-docker cp "${HERE}/crawler-beans.cxml" "${CONTAINER}:/opt/heritrix/jobs/${JOB}/crawler-beans.cxml"
+BEANS_TMP="$(mktemp)"
+sed "s#https://quotes\.toscrape\.com/#${TARGET_URL}#g" "${HERE}/crawler-beans.cxml" > "${BEANS_TMP}"
+docker cp "${BEANS_TMP}" "${CONTAINER}:/opt/heritrix/jobs/${JOB}/crawler-beans.cxml"
+rm -f "${BEANS_TMP}"
 
 # --- 2. wait for the REST API to come up ---------------------------------
 # The JVM + JSSE listener take a moment to start accepting TLS. A bare curl
@@ -98,10 +111,10 @@ while [[ $(date +%s) -lt ${deadline} ]]; do
   # Count quotes.toscrape.com fetches whose discovery-path (field 5) contains L.
   # awk exits 0 even on no match; tr keeps n a single clean integer for the test.
   links=$(docker exec "${CONTAINER}" sh -c \
-        "awk '\$4 ~ /quotes\.toscrape\.com/ && \$5 ~ /L/' /opt/heritrix/jobs/${JOB}/latest/logs/crawl.log 2>/dev/null | wc -l" \
+        "awk '\$4 ~ /${TARGET_DOMAIN_RE}/ && \$5 ~ /L/' /opt/heritrix/jobs/${JOB}/latest/logs/crawl.log 2>/dev/null | wc -l" \
         | tr -dc '0-9')
   links=${links:-0}
-  printf 'followed (L-path) quotes.toscrape.com fetches so far: %s\r' "${links}"
+  printf 'followed (L-path) %s fetches so far: %s\r' "${TARGET_DOMAIN}" "${links}"
   [[ "${links}" -ge 2 ]] && { echo; echo "link-following confirmed, stopping early."; break; }
   sleep 1
 done
@@ -125,8 +138,8 @@ docker exec "${CONTAINER}" sh -c \
   "find ${JOBROOT} -name '*.warc.gz' -exec zcat {} \; 2>/dev/null | tr -d '\r' | grep -ai '^User-Agent:' | sort -u" \
   > "${OUT}/observed-user-agent.txt" 2>/dev/null || true
 
-echo "--- crawl.log (quotes.toscrape.com fetches) ---"
-grep -E 'quotes\.toscrape\.com|robots\.txt' "${OUT}/crawl.log" | head -20 || true
+echo "--- crawl.log (${TARGET_DOMAIN} fetches) ---"
+grep -E "${TARGET_DOMAIN_RE}|robots\.txt" "${OUT}/crawl.log" | head -20 || true
 echo "--- observed User-Agent (sent; from WARC request records) ---"
 cat "${OUT}/observed-user-agent.txt" || true
 

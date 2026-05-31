@@ -25,6 +25,26 @@ mkdir -p "${OUT}" "${LOGS}"
 HOST_UID="$(id -u)"
 HOST_GID="$(id -g)"
 
+# Crawl target. Defaults to the public quotes sandbox; override to point the
+# baseline at the study's fingerprint server:
+#   TARGET_URL=https://uxbehaviorsuite.com/ ./run.sh
+TARGET_URL="${TARGET_URL:-https://quotes.toscrape.com/}"
+TARGET_DOMAIN="$(printf '%s' "${TARGET_URL}" | sed -E 's#^[a-z]+://##; s#/.*$##')"
+TARGET_DOMAIN_RE="$(printf '%s' "${TARGET_DOMAIN}" | sed 's/\./\\./g')"
+
+# Render the seed list and the host-pinned URL filter for the chosen target
+# into a temp dir, so the committed seed.txt / regex-urlfilter.txt stay pinned
+# to the public sandbox. The temp dir is mounted in place of the committed ones.
+GENCONF="$(mktemp -d)"
+cleanup() { rm -rf "${GENCONF}"; }
+trap cleanup EXIT
+mkdir -p "${GENCONF}/urls"
+printf '%s\n' "${TARGET_URL}" > "${GENCONF}/urls/seed.txt"
+# Swap the single accept-host rule (+^https?://<host>/) to the target host.
+sed -E "s#^\+\^https\?://[^/]*/#+^https?://${TARGET_DOMAIN_RE}/#" \
+  "${HERE}/regex-urlfilter.txt" > "${GENCONF}/regex-urlfilter.txt"
+
+echo "==> Target: ${TARGET_URL}"
 echo "==> Using image: ${IMAGE}"
 docker image inspect "${IMAGE}" >/dev/null 2>&1 || docker pull "${IMAGE}"
 
@@ -39,9 +59,9 @@ docker run --rm \
   -e HOST_UID="${HOST_UID}" \
   -e HOST_GID="${HOST_GID}" \
   -v "${HERE}/nutch-site.xml:${NUTCH_HOME}/conf/nutch-site.xml:ro" \
-  -v "${HERE}/regex-urlfilter.txt:${NUTCH_HOME}/conf/regex-urlfilter.txt:ro" \
+  -v "${GENCONF}/regex-urlfilter.txt:${NUTCH_HOME}/conf/regex-urlfilter.txt:ro" \
   -v "${HERE}/log4j2.xml:${NUTCH_HOME}/conf/log4j2.xml:ro" \
-  -v "${HERE}/urls:${NUTCH_HOME}/urls:ro" \
+  -v "${GENCONF}/urls:${NUTCH_HOME}/urls:ro" \
   -v "${OUT}:${NUTCH_HOME}/output" \
   -v "${LOGS}:${NUTCH_HOME}/logs" \
   --entrypoint /bin/bash \
@@ -108,5 +128,5 @@ echo
 echo "----- composed http.agent (authoritative UA actually used) -----"
 grep -h "http.agent =" "${LOGS}/hadoop.log" | head -3 || true
 echo
-echo "----- quotes.toscrape.com fetches (incl. /robots.txt at DEBUG) -----"
-grep -hE "quotes\.toscrape\.com" "${LOGS}/hadoop.log" | grep -iE "fetch|robots| - HTTP" | head -25 || true
+echo "----- ${TARGET_DOMAIN} fetches (incl. /robots.txt at DEBUG) -----"
+grep -hE "${TARGET_DOMAIN_RE}" "${LOGS}/hadoop.log" | grep -iE "fetch|robots| - HTTP" | head -25 || true
