@@ -18,6 +18,9 @@ data/
 logs/
 *.log
 
+# --- multi-trial run working data (manifests, per-trial console logs, log mirrors) ---
+_trials/
+
 # --- Python / Scrapy ---
 .venv/
 venv/

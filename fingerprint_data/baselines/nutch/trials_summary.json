@@ -1,0 +1,1107 @@
+{
+  "crawler": "nutch",
+  "ua_marker": "Nutch-1.22",
+  "observed_egress_ips": [
+    "73.119.206.174"
+  ],
+  "pad_seconds": 5.0,
+  "source_logs": [
+    "/tmp/serverlogs/requests-2026-06-07.jsonl"
+  ],
+  "trials_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30
+  ],
+  "trial_count": 30,
+  "empty_trials": [],
+  "ja3_union": [
+    "25e40fc2c32a0186e362a303c5f18fb2"
+  ],
+  "ja4_union": [
+    "t13d1513h1_8daaf6152771_0c2151eeb530"
+  ],
+  "protocols_union": [
+    "HTTP/1.1"
+  ],
+  "ip_anomaly_trials": [],
+  "trials": [
+    {
+      "trial": 1,
+      "window_utc": {
+        "start": "2026-06-07T19:55:22.340436Z",
+        "end": "2026-06-07T19:56:12.065070Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 2,
+      "window_utc": {
+        "start": "2026-06-07T19:56:28.284334Z",
+        "end": "2026-06-07T19:57:18.439477Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 3,
+      "window_utc": {
+        "start": "2026-06-07T19:57:33.446010Z",
+        "end": "2026-06-07T19:58:22.847817Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 4,
+      "window_utc": {
+        "start": "2026-06-07T19:58:37.854618Z",
+        "end": "2026-06-07T19:59:27.655480Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 5,
+      "window_utc": {
+        "start": "2026-06-07T19:59:42.660420Z",
+        "end": "2026-06-07T20:00:34.190859Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 6,
+      "window_utc": {
+        "start": "2026-06-07T20:00:49.196338Z",
+        "end": "2026-06-07T20:01:41.740483Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 7,
+      "window_utc": {
+        "start": "2026-06-07T20:01:56.745757Z",
+        "end": "2026-06-07T20:02:46.166764Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 8,
+      "window_utc": {
+        "start": "2026-06-07T20:03:01.171882Z",
+        "end": "2026-06-07T20:03:52.553048Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 9,
+      "window_utc": {
+        "start": "2026-06-07T20:04:07.557964Z",
+        "end": "2026-06-07T20:04:59.763880Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 10,
+      "window_utc": {
+        "start": "2026-06-07T20:05:14.768610Z",
+        "end": "2026-06-07T20:06:04.835357Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 11,
+      "window_utc": {
+        "start": "2026-06-07T20:06:19.840600Z",
+        "end": "2026-06-07T20:07:11.115947Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 12,
+      "window_utc": {
+        "start": "2026-06-07T20:07:26.121596Z",
+        "end": "2026-06-07T20:08:17.505151Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 13,
+      "window_utc": {
+        "start": "2026-06-07T20:08:32.510544Z",
+        "end": "2026-06-07T20:09:22.851766Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 14,
+      "window_utc": {
+        "start": "2026-06-07T20:09:37.857626Z",
+        "end": "2026-06-07T20:10:28.233668Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 15,
+      "window_utc": {
+        "start": "2026-06-07T20:10:43.240272Z",
+        "end": "2026-06-07T20:11:33.797047Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 16,
+      "window_utc": {
+        "start": "2026-06-07T20:11:48.802568Z",
+        "end": "2026-06-07T20:12:39.538483Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 17,
+      "window_utc": {
+        "start": "2026-06-07T20:12:54.544347Z",
+        "end": "2026-06-07T20:13:47.198123Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 18,
+      "window_utc": {
+        "start": "2026-06-07T20:14:02.204087Z",
+        "end": "2026-06-07T20:14:53.229364Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 19,
+      "window_utc": {
+        "start": "2026-06-07T20:15:08.234601Z",
+        "end": "2026-06-07T20:15:59.276071Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 20,
+      "window_utc": {
+        "start": "2026-06-07T20:16:14.282010Z",
+        "end": "2026-06-07T20:17:04.942201Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 21,
+      "window_utc": {
+        "start": "2026-06-07T20:17:19.947790Z",
+        "end": "2026-06-07T20:18:10.208813Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 22,
+      "window_utc": {
+        "start": "2026-06-07T20:18:25.215118Z",
+        "end": "2026-06-07T20:19:14.350267Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 23,
+      "window_utc": {
+        "start": "2026-06-07T20:19:29.355174Z",
+        "end": "2026-06-07T20:20:18.631897Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 24,
+      "window_utc": {
+        "start": "2026-06-07T20:20:33.638256Z",
+        "end": "2026-06-07T20:21:22.835873Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 25,
+      "window_utc": {
+        "start": "2026-06-07T20:21:37.841644Z",
+        "end": "2026-06-07T20:22:27.876926Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 26,
+      "window_utc": {
+        "start": "2026-06-07T20:22:42.883207Z",
+        "end": "2026-06-07T20:23:33.068206Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 27,
+      "window_utc": {
+        "start": "2026-06-07T20:23:48.074343Z",
+        "end": "2026-06-07T20:24:39.649503Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 28,
+      "window_utc": {
+        "start": "2026-06-07T20:24:54.656114Z",
+        "end": "2026-06-07T20:25:44.604825Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 29,
+      "window_utc": {
+        "start": "2026-06-07T20:25:59.610782Z",
+        "end": "2026-06-07T20:26:49.244020Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    },
+    {
+      "trial": 30,
+      "window_utc": {
+        "start": "2026-06-07T20:27:04.250471Z",
+        "end": "2026-06-07T20:27:54.719743Z"
+      },
+      "exit_code": "0",
+      "record_count": 8,
+      "source_ips": {
+        "73.119.206.174": 8
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "25e40fc2c32a0186e362a303c5f18fb2"
+      ],
+      "ja4_hashes": [
+        "t13d1513h1_8daaf6152771_0c2151eeb530"
+      ],
+      "protocols": [
+        "HTTP/1.1"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/robots.txt",
+        "/subscribe-v2.html",
+        "/s4-dom-mismatch.html",
+        "/s5-delayed-feedback.html",
+        "/subscribe-v1.html",
+        "/subscribe-v3.html"
+      ]
+    }
+  ]
+}

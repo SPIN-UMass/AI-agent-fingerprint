@@ -1,0 +1,1109 @@
+{
+  "crawler": "heritrix",
+  "ua_marker": "heritrix/3.15.0",
+  "observed_egress_ips": [
+    "73.119.206.174"
+  ],
+  "pad_seconds": 5.0,
+  "source_logs": [
+    "/tmp/serverlogs/requests-2026-06-07.jsonl"
+  ],
+  "trials_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30
+  ],
+  "trial_count": 30,
+  "empty_trials": [],
+  "ja3_union": [
+    "57128db24fb3c2fc035d6a39ccb08cac",
+    "adbab9d5752f7c834ec405ec92e46415"
+  ],
+  "ja4_union": [
+    "t13d311200_1d947a95fc68_7e1102d2036b",
+    "t13d311300_1d947a95fc68_d6a918353cf0"
+  ],
+  "protocols_union": [
+    "HTTP/1.0"
+  ],
+  "ip_anomaly_trials": [],
+  "trials": [
+    {
+      "trial": 1,
+      "window_utc": {
+        "start": "2026-06-07T19:34:25.875150Z",
+        "end": "2026-06-07T19:34:51.610693Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 2,
+      "window_utc": {
+        "start": "2026-06-07T19:35:17.672870Z",
+        "end": "2026-06-07T19:35:44.397427Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 3,
+      "window_utc": {
+        "start": "2026-06-07T19:35:59.403932Z",
+        "end": "2026-06-07T19:36:28.297095Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 4,
+      "window_utc": {
+        "start": "2026-06-07T19:36:43.304019Z",
+        "end": "2026-06-07T19:37:08.973435Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 5,
+      "window_utc": {
+        "start": "2026-06-07T19:37:23.980347Z",
+        "end": "2026-06-07T19:37:49.727126Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 6,
+      "window_utc": {
+        "start": "2026-06-07T19:38:04.733986Z",
+        "end": "2026-06-07T19:38:30.386977Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 7,
+      "window_utc": {
+        "start": "2026-06-07T19:38:45.393786Z",
+        "end": "2026-06-07T19:39:11.096774Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 8,
+      "window_utc": {
+        "start": "2026-06-07T19:39:26.102750Z",
+        "end": "2026-06-07T19:39:51.882981Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 9,
+      "window_utc": {
+        "start": "2026-06-07T19:40:06.889436Z",
+        "end": "2026-06-07T19:40:32.630397Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 10,
+      "window_utc": {
+        "start": "2026-06-07T19:40:47.636887Z",
+        "end": "2026-06-07T19:41:13.452208Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 11,
+      "window_utc": {
+        "start": "2026-06-07T19:41:28.458107Z",
+        "end": "2026-06-07T19:41:54.105293Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 12,
+      "window_utc": {
+        "start": "2026-06-07T19:42:09.112372Z",
+        "end": "2026-06-07T19:42:34.772692Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 13,
+      "window_utc": {
+        "start": "2026-06-07T19:42:49.777776Z",
+        "end": "2026-06-07T19:43:15.539574Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 14,
+      "window_utc": {
+        "start": "2026-06-07T19:43:30.544494Z",
+        "end": "2026-06-07T19:43:56.273534Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 15,
+      "window_utc": {
+        "start": "2026-06-07T19:44:11.279566Z",
+        "end": "2026-06-07T19:44:36.954518Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 16,
+      "window_utc": {
+        "start": "2026-06-07T19:44:51.960873Z",
+        "end": "2026-06-07T19:45:17.559502Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 17,
+      "window_utc": {
+        "start": "2026-06-07T19:45:32.565501Z",
+        "end": "2026-06-07T19:45:58.255304Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 18,
+      "window_utc": {
+        "start": "2026-06-07T19:46:13.261398Z",
+        "end": "2026-06-07T19:46:38.913145Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 19,
+      "window_utc": {
+        "start": "2026-06-07T19:46:53.918819Z",
+        "end": "2026-06-07T19:47:19.539496Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 20,
+      "window_utc": {
+        "start": "2026-06-07T19:47:34.546077Z",
+        "end": "2026-06-07T19:48:00.205876Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 21,
+      "window_utc": {
+        "start": "2026-06-07T19:48:15.210905Z",
+        "end": "2026-06-07T19:48:40.898309Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 22,
+      "window_utc": {
+        "start": "2026-06-07T19:48:55.904975Z",
+        "end": "2026-06-07T19:49:21.548166Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 23,
+      "window_utc": {
+        "start": "2026-06-07T19:49:36.553778Z",
+        "end": "2026-06-07T19:50:02.254617Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 24,
+      "window_utc": {
+        "start": "2026-06-07T19:50:17.261145Z",
+        "end": "2026-06-07T19:50:42.924077Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 25,
+      "window_utc": {
+        "start": "2026-06-07T19:50:57.930623Z",
+        "end": "2026-06-07T19:51:23.551142Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 26,
+      "window_utc": {
+        "start": "2026-06-07T19:51:38.555799Z",
+        "end": "2026-06-07T19:52:04.255265Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 27,
+      "window_utc": {
+        "start": "2026-06-07T19:52:19.261682Z",
+        "end": "2026-06-07T19:52:44.960588Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 28,
+      "window_utc": {
+        "start": "2026-06-07T19:52:59.967262Z",
+        "end": "2026-06-07T19:53:25.617246Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 29,
+      "window_utc": {
+        "start": "2026-06-07T19:53:40.622773Z",
+        "end": "2026-06-07T19:54:06.302066Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    },
+    {
+      "trial": 30,
+      "window_utc": {
+        "start": "2026-06-07T19:54:21.307336Z",
+        "end": "2026-06-07T19:54:47.993255Z"
+      },
+      "exit_code": "0",
+      "record_count": 6,
+      "source_ips": {
+        "73.119.206.174": 6
+      },
+      "non_egress_ips": [],
+      "ja3_hashes": [
+        "57128db24fb3c2fc035d6a39ccb08cac",
+        "adbab9d5752f7c834ec405ec92e46415"
+      ],
+      "ja4_hashes": [
+        "t13d311200_1d947a95fc68_7e1102d2036b",
+        "t13d311300_1d947a95fc68_d6a918353cf0"
+      ],
+      "protocols": [
+        "HTTP/1.0"
+      ],
+      "http2_akamai_fingerprints": [
+        ""
+      ],
+      "paths_fetched": [
+        "/robots.txt",
+        "/",
+        "/logger.js",
+        "/favicon.ico",
+        "/index.html",
+        "/subscribe-v1.html"
+      ]
+    }
+  ]
+}

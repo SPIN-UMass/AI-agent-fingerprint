@@ -11,17 +11,29 @@ agents.
 
 ```
 fingerprint_data/baselines/
-├── scrapy/    { requests.jsonl, capture.json }
-├── heritrix/  { requests.jsonl, capture.json }
-└── nutch/     { requests.jsonl, capture.json }
+├── scrapy/
+│   ├── requests.jsonl        # single-run capture (2026-05-31)
+│   ├── capture.json          #   + its provenance/summary
+│   ├── trials_summary.json   # per-trial summary of the 30-sample set
+│   └── trial-001/ .. trial-030/   { requests.jsonl, interactions.jsonl }
+├── heritrix/   (same shape)
+└── nutch/      (same shape)
 ```
 
-- `requests.jsonl` — the server's per-request fingerprint records (same schema
-  as `../logs/requests-*.jsonl`: `tls` with ja3/ja4, `http2` akamai fingerprint,
+- `requests.jsonl` (crawler root) — the original single-run capture: the
+  server's per-request fingerprint records (same schema as
+  `../logs/requests-*.jsonl`: `tls` with ja3/ja4, `http2` akamai fingerprint,
   `http` with ordered headers), one JSON object per line, verbatim from the
   server log.
-- `capture.json` — provenance + a computed summary (UTC windows, observed UA,
-  TLS hashes, protocol, header orderings, paths) for that crawler.
+- `capture.json` — provenance + computed summary of that single run.
+- `trial-NNN/requests.jsonl` — one of **30 independent crawl samples** (see
+  below), same record schema, verbatim from the server log.
+- `trial-NNN/interactions.jsonl` — always **empty**: these crawlers run no JS,
+  so `logger.js` never fires. Present for layout parity with the AI-agent
+  traces in `../splitted_traces/<agent>/trial-NNN/`.
+- `trials_summary.json` — per-trial record counts, source-IP breakdown, ja3/ja4
+  sets, protocols and paths for the 30-sample set, plus the observed egress IP
+  and any anomalies.
 
 ## How these were captured
 
@@ -49,7 +61,43 @@ cd baselines/heritrix && TARGET_URL=https://uxbehaviorsuite.com/ DWELL_SECONDS=6
 cd baselines/nutch && TARGET_URL=https://uxbehaviorsuite.com/ ./run.sh
 ```
 
+## 30 samples per crawler (2026-06-07)
+
+Each crawler was run **30 times, one trial at a time, sequentially** against the
+same server, so no two trial windows ever overlap. This mirrors the 30-trial
+structure of the AI-agent dataset in `../splitted_traces/`. Captures landed in
+`<crawler>/trial-001/ .. trial-030/`.
+
+- **Date:** 2026-06-07, 19:23–20:28 UTC (Scrapy → Heritrix → Nutch, in order).
+- **Harness:**
+  [`baselines/run_trials.sh`](../../baselines/run_trials.sh) runs N sequential
+  trials of one crawler with a 15 s idle gap between them and records each
+  trial's UTC `[start, end]` window to a manifest.
+  [`baselines/attribute_trials.py`](../../baselines/attribute_trials.py) then
+  slices the server log per trial by `[start−5s, end+5s]` ∩ UA marker.
+- **Attribution / provenance:** the egress IP observed at the server
+  (`73.119.206.174`) was used as a cross-check — every attributed record across
+  all 90 trials carried it, with **zero** out-of-window/foreign-IP anomalies.
+  Counts were perfectly uniform per crawler (Scrapy 11, Heritrix 6, Nutch 8
+  requests/trial; 750 records total), confirming clean, non-intersecting windows.
+- **Same per-run config as the single-run captures** (Scrapy `PAGECOUNT=20`,
+  Heritrix default early-stop, Nutch `topN=5`×2), so per-trial page coverage
+  matches the caveat below.
+
+Reproduce the full 30-sample set for one crawler:
+
+```sh
+# from the repo root; defaults to TARGET_URL=https://uxbehaviorsuite.com/
+baselines/run_trials.sh scrapy 1-30 15        # then heritrix, then nutch
+# attribute (after copying the server's requests-<date>.jsonl locally):
+baselines/attribute_trials.py --crawler scrapy --ua 'Scrapy/2.14.1' \
+  --egress <your-egress-ip> --manifest baselines/_trials/scrapy.manifest.tsv \
+  --dest fingerprint_data/baselines --log /path/to/requests-<date>.jsonl
+```
+
 ## Captured fingerprints at a glance
+
+Counts below are **per crawl** (identical across all 30 trials of each crawler):
 
 | Crawler  | Reqs | ja3 (distinct)        | HTTP | HTTP/2 | Notable header behaviour |
 |----------|------|-----------------------|------|--------|--------------------------|
