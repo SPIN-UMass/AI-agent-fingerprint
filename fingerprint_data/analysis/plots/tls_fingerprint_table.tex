@@ -1,0 +1,24 @@
+\begin{table*}[ht]
+\centering
+\caption{TLS/H2 fingerprint discrimination after removing \texttt{POST /collect} (sendBeacon) traffic. \textbf{Bold} values are unique to that user.}
+\label{tab:tls_fingerprints}
+
+\begin{tabular}{@{}lrrrrrrclrcc@{}}
+\toprule
+\multicolumn{4}{l}{\textit{Session}} & \multicolumn{3}{c}{\textit{PQ Key Exchange (\% of H2)}} & \multicolumn{2}{c}{\textit{JA4}} & \multicolumn{3}{c}{\textit{HTTP/2 Settings}} \\
+\cmidrule(lr){1-4} \cmidrule(lr){5-7} \cmidrule(lr){8-9} \cmidrule(lr){10-12}
+Agent & \makecell[r]{H2\\rows} & \makecell[r]{Source\\IPs} & \makecell[r]{JA3\\unique} & \makecell[r]{Kyber768\\(\%)} & \makecell[r]{MLKEM768\\(\%)} & \makecell[r]{Firefox\\JA4 (\%)} & \makecell[c]{Ext\\count} & \makecell[l]{JA4\_c hash\\(dominant)} & \makecell[r]{AK window\\update} & \makecell[c]{AK pseudo\\order} & \makecell[c]{Stream-5\\weight} \\
+\midrule
+\textbf{AutoGen} & 257 & 41 & 37 & 36\% & \textbf{67\%} & 0\% & 16 & \texttt{d8a2da3f94cd} & 15,663,105 & \texttt{m,a,s,p} & \textbf{256 (96\%)} \\
+\textbf{Browser Use} & 286 & 30 & 32 & 36\% & \textbf{69\%} & 0\% & 16 & \texttt{d8a2da3f94cd} & 15,663,105 & \texttt{m,a,s,p} & \textbf{220 (100\%)} \\
+\textbf{Claude} & 242 & 8 & 32 & \textbf{0\%} & 100\% & 0\% & 16 & \texttt{d8a2da3f94cd} & 15,663,105 & \texttt{m,a,s,p} & \textbf{256 (100\%)} \\
+\textbf{Gemini} & 243 & 8 & 32 & \textbf{1\%} & 100\% & 0\% & 16 & \texttt{d8a2da3f94cd} & 15,663,105 & \texttt{m,a,s,p} & \textbf{256 (97\%)} \\
+\textbf{Operator} & 234 & 44 & 29 & \textbf{3\%} & \textbf{56\%} & \textbf{39\%} & 16 & \texttt{d8a2da3f94cd} & 15,663,105 & \texttt{m,a,s,p} & \textbf{220 (86\%)} \\
+\textbf{Skyvern} & 300 & 72 & 223 & \textbf{12\%} & \textbf{95\%} & 0\% & \textbf{17} & \textbf{\texttt{b6f405a00624}} & 15,663,105 & \texttt{m,a,s,p} & \textbf{110 (54\%)} \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\small
+\textit{Notes:} sendBeacon traffic (\texttt{POST /collect}) removed before analysis. All metrics computed on HTTP/2 connections only, except \textit{Source IPs} (all protocols). PQ key-exchange columns show the fraction of H2 handshakes advertising that curve group. JA4\_c is the sorted, hashed TLS extension list (dominant value shown). \textit{Stream-5 weight} is the HTTP/2 priority weight Chrome assigns to the 3rd concurrent request (stream ID 5), the only reliable signal separating Users 3 and 4.
+\end{table*}

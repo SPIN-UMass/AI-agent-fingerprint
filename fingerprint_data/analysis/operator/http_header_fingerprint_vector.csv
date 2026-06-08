@@ -1,0 +1,31 @@
+trace,header_order_hash,n_headers,sf_mode,sf_dest,sf_site,sf_combo,sf_known_combo,sf_any_violation,ch_is_headless,ch_brand_count,ch_brand_matches_ua,ch_mobile_matches_ua,ch_platform_matches_ua,ch_any_incoherence,ua_family,ua_os,ua_version,priority_urgency,priority_incr,priority_expected,accept,accept_encoding,upgrade_insecure,has_priority,has_sec_ch_ua,has_sec_fetch_mode,has_upgrade_insecure_requests
+trial_001,0f5630364b6749e7,14,cors,empty,same-origin,cors|empty|same-origin,,,True,3,True,True,True,True,edge,windows,122,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_002,f110253844c0fafd,4,,,,||,,,False,0,True,True,True,False,python,other,123,,,,*/*,"gzip, deflate",,False,False,False,False
+trial_003,0cc95a7b194aa42f,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_004,00151146c7082bf0,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_005,039596c24c2e88c2,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_006,1b740ca423b7baec,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_007,10328099cefebbd7,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_008,074c1d143ae8acf4,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_009,00de90484b2ef286,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_010,0efbbf6159ceae4b,14,cors,empty,same-origin,cors|empty|same-origin,,,True,3,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_011,23426ae9d4bf3b5b,15,cors,empty,same-origin,cors|empty|same-origin,,,False,3,True,True,True,False,chrome,windows,145,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_012,03602793f2090fef,15,cors,empty,same-origin,cors|empty|same-origin,,,False,3,True,True,True,False,chrome,windows,145,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_013,12f45713df94a4e7,15,cors,empty,same-origin,cors|empty|same-origin,,,False,3,True,True,True,False,chrome,windows,145,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_014,d54dbb3b9fb843f3,4,,,,||,,,False,0,True,True,True,False,other,other,,,,,*/*,"gzip,deflate",,False,False,False,False
+trial_015,e3b0c44298fc1c14,0,,,,||,,,False,0,True,True,True,False,other,other,147,4.0,True,True,,,,False,False,False,False
+trial_016,20d53f2575892105,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_017,00a52c19ee91104f,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_018,05f8f24ebe2317ec,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_019,2bd56f7e01654467,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_020,13d585c21c3f474d,15,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,headless-chrome,linux,147,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_021,0258c1c12779f04c,18,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,chrome,macos,144,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_022,0368b1f14a3e49af,18,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,chrome,macos,144,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_023,0c1104aac12ca473,18,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,chrome,macos,144,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_024,0431efa09134af57,18,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,chrome,macos,144,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_025,b95b212d68008724,18,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,chrome,macos,144,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_026,01cc8199fd2f7547,18,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,chrome,macos,144,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_027,03faf247baac2ac9,18,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,chrome,macos,144,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_028,e3b0c44298fc1c14,0,,,,||,,,False,0,True,True,True,False,other,other,144,4.0,True,True,,,,False,False,False,False
+trial_029,13a47197a9e69922,18,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,chrome,macos,144,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False
+trial_030,0422f7bdfde37555,18,cors,empty,same-origin,cors|empty|same-origin,,,False,2,True,True,True,False,chrome,macos,144,4.0,True,True,*/*,"gzip, deflate, br, zstd",,True,True,True,False

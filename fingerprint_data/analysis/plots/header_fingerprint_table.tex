@@ -1,0 +1,79 @@
+% ─────────────────────────────────────────────────────────
+% Required LaTeX packages:
+%   \usepackage{booktabs, xcolor, graphicx, rotating}
+%
+% Legend:
+%   RED cell   = bot-indicative / anomalous value
+%   *          = value inconsistent across trials
+%   $\bigstar$ = all orderings unique (fully randomised)
+% ─────────────────────────────────────────────────────────
+
+\begin{table}[htbp]
+  \centering
+  \caption{%
+      HTTP header fingerprint comparison across six AI-agent frameworks (30 trials each).
+      Only navigation \texttt{GET} requests are analysed (\texttt{POST /collect} sendBeacon traffic excluded).
+      \textcolor{red}{Red}\,=\,bot-indicative anomaly;\quad $\bigstar$\,=\,all orderings unique (fully randomised);\quad \textsuperscript{*}\,=\,value inconsistent across trials.%
+  }
+  \label{tab:agent-header-fingerprint}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccccc}
+      \toprule
+      \textbf{Feature} & \rotatebox{55}{\textbf{AutoGen}} & \rotatebox{55}{\textbf{Browser Use}} & \rotatebox{55}{\textbf{Claude}} & \rotatebox{55}{\textbf{Gemini}} & \rotatebox{55}{\textbf{Operator}} & \rotatebox{55}{\textbf{Skyvern}} \\
+      \toprule
+      \midrule
+      \multicolumn{7}{l}{\small\textit{\textbf{1. Browser Identity  (navigation GETs)}}} \\
+      \midrule[0.3pt]
+      UA family (mode) & edge\textsuperscript{*} & headless-chrome & headless-chrome & headless-chrome & chrome\textsuperscript{*} & chrome\textsuperscript{*} \\
+      UA OS (mode) & windows & linux & linux & linux & linux\textsuperscript{*} & windows\textsuperscript{*} \\
+      UA version --- major (mode) & 122.0\textsuperscript{*} & 147.0\textsuperscript{*} & 147.0 & 147.0 & 147.0\textsuperscript{*} & 145.0\textsuperscript{*} \\
+      Headless Chrome detected (\%) & \textcolor{red}{99\%} & 0\% & \textcolor{red}{100\%} & \textcolor{red}{100\%} & 8\% & 4\% \\
+      \texttt{Sec-Ch-Ua} brand count (mode) & 3 & 2 & 3 & 3 & 2\textsuperscript{*} & 3\textsuperscript{*} \\
+      \midrule
+      \multicolumn{7}{l}{\small\textit{\textbf{2. Header Order Randomisation  (navigation GETs) \quad{\footnotesize $\bigstar$\,=\,all orderings unique}}}} \\
+      \midrule[0.3pt]
+      Unique orderings / total nav requests & 196/197 & 209/210 & \textcolor{red}{210/210 $\bigstar$} & 208/210 & 170/175 & 225/226 \\
+      Num.\ headers per request ($\mu \pm \sigma$) & 12.1$\pm$0.3 & 12.0$\pm$0.0 & 12.0$\pm$0.0 & 12.0$\pm$0.0 & 13.7$\pm$1.9 & 13.8$\pm$0.5 \\
+      \midrule
+      \multicolumn{7}{l}{\small\textit{\textbf{3. Header Field Presence  (\% of navigation GETs)}}} \\
+      \midrule[0.3pt]
+      \texttt{Accept-Language}  \textit{(absent = bot signal)} & \textcolor{red}{1\%} & 100\% & \textcolor{red}{0\%} & \textcolor{red}{0\%} & 92\% & 96\% \\
+      \texttt{Sec-Fetch-User: ?1}  \textit{(absent = bot signal)} & 100\% & \textcolor{red}{0\%} & 100\% & 100\% & 59\% & 100\% \\
+      \texttt{Priority} & 100\% & 100\% & 100\% & 100\% & 93\% & 99\% \\
+      \texttt{Sec-Ch-Ua} & 100\% & 100\% & 100\% & 100\% & 100\% & 100\% \\
+      \texttt{Sec-Fetch-Mode} & 100\% & 100\% & 100\% & 100\% & 100\% & 100\% \\
+      \texttt{Upgrade-Insecure-Requests} & 100\% & 100\% & 100\% & 100\% & 100\% & 100\% \\
+      \texttt{Cache-Control}  \textit{(unusual on nav GETs)} & 0\% & 0\% & 0\% & 0\% & \textcolor{red}{7\%} & 0\% \\
+      \texttt{Connection}  \textit{(HTTP/1.1 artefact on h2)} & 0\% & 0\% & 0\% & 0\% & 1\% & 1\% \\
+      \texttt{TE}  \textit{(HTTP/1.1 artefact on h2)} & 0\% & 0\% & 0\% & 0\% & 0\% & 0\% \\
+      \texttt{DNT} & 0\% & 0\% & 0\% & 0\% & 0\% & 0\% \\
+      Non-standard headers (examples) & \textit{none} & \textit{none} & \textit{none} & \textit{none} & \textbackslash{}texttt{signature}, \textbackslash{}texttt{signature-agent} & \textbackslash{}texttt{sec-gpc} \\
+      \midrule
+      \multicolumn{7}{l}{\small\textit{\textbf{4. Sec-Fetch Signals  (navigation GETs)}}} \\
+      \midrule[0.3pt]
+      \texttt{Sec-Fetch-Site} value (mode) & none\textsuperscript{*} & none & none & none & none\textsuperscript{*} & same-origin\textsuperscript{*} \\
+      \texttt{Sec-Fetch-Site} always \texttt{none} (\%)  \textit{(= broken referrer chain)} & 92\% & \textcolor{red}{100\%} & \textcolor{red}{100\%} & \textcolor{red}{100\%} & 97\% & 19\% \\
+      \texttt{Sec-Fetch-User} value (mode) & ?1 & absent & ?1 & ?1 & ?1\textsuperscript{*} & ?1 \\
+      Sec-Fetch logic violation (\%) & 0\% & \textcolor{red}{100\%} & 0\% & 0\% & \textcolor{red}{41\%} & 0\% \\
+      \midrule
+      \multicolumn{7}{l}{\small\textit{\textbf{5. Client Hints (\texttt{Sec-Ch-Ua}) Coherence  (navigation GETs)}}} \\
+      \midrule[0.3pt]
+      UA vs.\ \texttt{Sec-Ch-Ua} incoherence (\%) & \textcolor{red}{100\%} & 0\% & 0\% & 0\% & 3\% & 6\% \\
+      Mobile hint matches UA (\%) & 100\% & 100\% & 100\% & 100\% & 100\% & 100\% \\
+      Platform hint matches UA (\%) & 99\% & 100\% & 100\% & 100\% & 100\% & 100\% \\
+      \midrule
+      \multicolumn{7}{l}{\small\textit{\textbf{6. \texttt{Priority} Header  (navigation GETs, expected: \texttt{u=0, i})}}} \\
+      \midrule[0.3pt]
+      Urgency value (mode) & 0.0 & 0.0 & 0.0 & 0.0 & 0.0\textsuperscript{*} & 0.0\textsuperscript{*} \\
+      Incremental flag (mode) & True & True & True & True & True\textsuperscript{*} & True\textsuperscript{*} \\
+      Priority value correct (\%) & 100\% & 100\% & 100\% & 100\% & 93\% & 99\% \\
+      \midrule
+      \multicolumn{7}{l}{\small\textit{\textbf{7. Subresource Requests  (script / image / …)}}} \\
+      \midrule[0.3pt]
+      Subresource requests observed & 38 & 65 & 30 & 30 & 45 & 45 \\
+      \texttt{Accept-Language} present (\%) & 11\% & 92\% & 0\% & 0\% & 89\% & 96\% \\
+      Unique orderings / total subresource requests & 36/38 & 63/65 & 29/30 & \textcolor{red}{30/30 $\bigstar$} & 44/45 & \textcolor{red}{45/45 $\bigstar$} \\
+      \bottomrule
+    \end{tabular}%
+  }
+\end{table}

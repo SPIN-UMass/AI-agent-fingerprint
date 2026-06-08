@@ -1,0 +1,30 @@
+feature,description,null_frac,n_unique,overall_mean,overall_std,mean_autogen_websurfer,mean_browser_use,mean_claude_computer_use,mean_gemini_computer_use,mean_operator,mean_skyvern
+f1_frac_kyber768,Fraction of requests with x25519Kyber768 curve (older Chrome PQ),0.0,24,0.119,0.2875,0.2767,0.3182,0.0037,0.0074,0.028,0.0798
+f1_frac_mlkem768,Fraction of requests with X25519MLKEM768 curve (newer Chrome PQ),0.0,33,0.7958,0.3511,0.6495,0.6529,0.9896,0.9822,0.5796,0.9212
+f2_frac_firefox_ja4,"Fraction of requests with Firefox JA4 prefix (t13d2812, 28 TLS ext)",0.0,7,0.0432,0.189,0.0,0.0,0.0,0.0,0.2561,0.0033
+f2_frac_h2,Fraction of requests negotiated over HTTP/2,0.0,25,0.9238,0.1766,0.8854,0.9315,0.9793,0.9793,0.8494,0.9181
+f2_frac_pq,Fraction of requests advertising any PQ key exchange,0.0,26,0.8847,0.2606,0.8773,0.9382,0.9896,0.9822,0.5796,0.941
+f3_mean_ak_window,"Mean H2 WINDOW_UPDATE size (Firefox~2.15e9, Chrome~1.57e7)",0.0111,31,128671123.5006,453838014.4052,24728649.1191,20102950.5422,15670872.2296,15643686.9259,706126533.9284,28251075.6203
+f3_frac_win_firefox,Fraction of requests with Firefox-sized H2 window (>1e9),0.0,12,0.0468,0.1918,0.0083,0.0042,0.0,0.0,0.2612,0.0074
+f3_mean_init_window,Mean H2 SETTINGS INITIAL_WINDOW_SIZE,0.0111,32,112966860.7635,445022995.1867,6414513.6312,6357200.0508,6279805.1556,6287572.3852,675673634.7073,14302223.5804
+f4_frac_s3_w110,Fraction of requests where stream-3 priority weight = 110 (Skyvern),0.0,12,0.1245,0.29,0.0,0.0,0.0,0.0,0.0667,0.6804
+f4_frac_s3_w220,Fraction of requests where stream-3 priority weight = 220 (Chrome),0.0,12,0.8088,0.3605,1.0,1.0,1.0,1.0,0.5333,0.3196
+f5_frac_s5_w110,Fraction of requests where stream-5 priority weight = 110,0.0,2,0.0222,0.1478,0.0333,0.0,0.0,0.0333,0.0,0.0667
+f5_frac_s5_w220,Fraction of requests where stream-5 priority weight = 220 (BrowserUse),0.0,3,0.262,0.4401,0.0056,1.0,0.0,0.0,0.4333,0.1333
+f5_frac_s5_w256,Fraction of requests where stream-5 priority weight = 256 (Claude/Gemini),0.0,3,0.4935,0.5006,0.9278,0.0,1.0,0.9667,0.0667,0.0
+f6_stream3_coverage,Fraction of requests with stream-3 priority data present,0.0,34,0.7057,0.2647,0.6889,0.7951,0.8504,0.8471,0.4745,0.5785
+f6_stream5_coverage,Fraction of requests with stream-5 priority data present,0.0,29,0.5217,0.3213,0.5697,0.6957,0.7289,0.7261,0.3802,0.0295
+f7_ja3_diversity,"Unique JA3 fingerprints / total requests (Skyvern~0.76, Claude~0.14)",0.0,38,0.2921,0.2651,0.2215,0.144,0.1463,0.1462,0.3057,0.7888
+f7_ip_diversity,Unique source IPs / total requests,0.0,31,0.1997,0.1261,0.2388,0.164,0.1463,0.1462,0.2658,0.237
+f8_mean_cipher_count,"Mean number of cipher suites offered (Firefox~28, Chrome~15)",0.0,54,16.5283,5.6851,18.0103,15.4846,14.9822,15.1333,20.1418,15.4176
+f8_mean_curve_count,Mean number of elliptic curves offered,0.0,49,4.4857,1.3445,4.5861,4.1684,4.0219,4.0652,5.7205,4.352
+f8_mean_sig_count,Mean number of signature schemes offered,0.0,55,9.1372,3.0394,8.7781,8.4451,8.07,8.1037,12.7508,8.6753
+f9_h2_pseudo_order,"Modal H2 pseudo-header order (0=Chrome, 1=Firefox, 2=Skyvern...)",0.0,4,0.0167,0.3254,-0.0667,-0.0333,0.0,0.0,0.2,0.0
+f9_ak_pseudo_order,Modal AK pseudo-header order (same scale as f9_h2),0.0,5,0.0611,0.3532,0.0,0.0,0.0,0.0,0.3667,0.0
+f10_frac_ext16,Fraction of requests with 16 TLS extensions (standard Chrome),0.0,33,0.7252,0.3592,0.8082,0.8945,0.9719,0.9681,0.4854,0.2229
+f10_frac_ext17,Fraction of requests with 17 TLS extensions (Skyvern extra extension),0.0,19,0.1122,0.2516,0.0,0.0,0.0,0.0,0.0528,0.6202
+f10_frac_firefox_ext,"Fraction of requests with Firefox TLS profile (ext=12, cipher=28 in JA4_A)",0.0,7,0.0432,0.189,0.0,0.0,0.0,0.0,0.2561,0.0033
+f11_grease_cipher,"Modal GREASE presence in cipher suites (1=present, 0=absent)",0.0,2,0.9,0.3008,0.9,0.9667,1.0,1.0,0.5667,0.9667
+f11_grease_curve,Modal GREASE presence in elliptic curves,0.0,2,0.9,0.3008,0.9,0.9667,1.0,1.0,0.5667,0.9667
+f11_grease_ver,Modal GREASE presence in supported_versions,0.0,2,0.9,0.3008,0.9,0.9667,1.0,1.0,0.5667,0.9667
+f12_log_n_requests,log1p(total requests in trial) -- session length signal,0.0,23,2.3314,0.454,2.3717,2.4571,2.2247,2.2282,2.25,2.4567
