@@ -81,12 +81,12 @@ for _, row in final_df.iterrows():
 order = sorted(cv_dict, key=cv_dict.get, reverse=True)
 
 colors = {
-    "AutoGen": "#2563EB",
-    "Browser Use": "#0D9488",
-    "Claude": "#D97706",
-    "Gemini": "#DC2626",
-    "Operator": "#7C3AED",
-    "Skyvern": "#16A34A",
+    "AutoGen": "#0072B2",
+    "Browser Use": "#E69F00",
+    "Claude": "#009E3F",
+    "Gemini": "#CC79A7",
+    "Operator": "#D52300",
+    "Skyvern": "#56D5E9",
 }
 
 fig, ax1 = plt.subplots(figsize=(12, 6))

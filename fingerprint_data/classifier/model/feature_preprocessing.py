@@ -199,99 +199,106 @@ def preprocess_behavioral(path: str = BEHAVIORAL_PATH) -> pd.DataFrame:
 
 
 # ── merge & split ─────────────────────────────────────────────────────────────
-
 def preprocess_all(
     temporal_path:   str   = TEMPORAL_PATH,
     http_path:       str   = HTTP_PATH,
     tls_path:        str   = TLS_PATH,
     behavioral_path: str   = BEHAVIORAL_PATH,
-    test_size:       float = TEST_SIZE,
-    random_seed:     int   = RANDOM_SEED,
 ) -> tuple[dict, LabelEncoder]:
     """
-    Preprocess all four feature sets and produce train/test splits.
-    All five datasets (4 individual + 1 combined) share the same row indices
-    so classifiers trained on each are directly comparable.
+    Preprocess all four feature sets and return aligned DataFrames.
+    No train/test split is performed here — the classifier handles that
+    via leave-one-trial-out cross-validation.
 
     Returns
     -------
     datasets : dict
         Keys: "temporal", "http", "tls", "behavioral", "combined"
         Each value is a dict with:
-            X_train, X_test  : pd.DataFrame
-            y_train, y_test  : pd.Series  (integer-encoded agent labels)
-            feature_names    : list[str]
+            X            : pd.DataFrame  (features only, no agent/trial/label)
+            y            : pd.Series     (integer-encoded agent labels)
+            trial        : pd.Series     (trial identifiers, for CV fold assignment)
+            feature_names: list[str]
     le : LabelEncoder
         Fitted on agent names; use le.inverse_transform() to decode predictions.
     """
-    # ── load each feature type ────────────────────────────────────────────────
     temporal   = preprocess_temporal(temporal_path)
     http       = preprocess_http(http_path)
     tls        = preprocess_tls(tls_path)
     behavioral = preprocess_behavioral(behavioral_path)
 
-    # ── inner join on (agent, trial) ──────────────────────────────────────────
-    # behavioral is missing 2 operator trials; inner join drops those rows
-    # so all feature sets are aligned to the same 178 rows.
     print("\n[combining]")
+
+    # ── Base index: rows present in all three complete sets ────────────────────
+    base_index = (
+        temporal[["agent", "trial"]]
+        .merge(http[["agent", "trial"]], on=["agent", "trial"], how="inner")
+        .merge(tls[["agent", "trial"]],  on=["agent", "trial"], how="inner")
+        .drop_duplicates()
+        .reset_index(drop=True)
+    )
+    print(f"  Base rows (temporal∩http∩tls): {len(base_index)}  "
+          f"({base_index['agent'].nunique()} agents)")
+
+    # Re-align the three complete sets to base_index
+    temporal = base_index.merge(temporal, on=["agent", "trial"], how="left")
+    http     = base_index.merge(http,     on=["agent", "trial"], how="left")
+    tls      = base_index.merge(tls,      on=["agent", "trial"], how="left")
+
+    # ── Behavioral + combined: inner join — drop rows missing behavioral ────────
+    beh_index = base_index.merge(
+        behavioral[["agent", "trial"]],
+        on=["agent", "trial"],
+        how="inner",
+    ).drop_duplicates().reset_index(drop=True)
+
+    behavioral_aligned = beh_index.merge(behavioral, on=["agent", "trial"], how="left")
+
     combined = (
         temporal
-        .merge(http,       on=["agent", "trial"], how="inner", suffixes=("", "_http"))
-        .merge(tls,        on=["agent", "trial"], how="inner", suffixes=("", "_tls"))
-        .merge(behavioral, on=["agent", "trial"], how="inner", suffixes=("", "_beh"))
+        .merge(http,               on=["agent", "trial"], how="left", suffixes=("", "_http"))
+        .merge(tls,                on=["agent", "trial"], how="left", suffixes=("", "_tls"))
+        .merge(behavioral_aligned, on=["agent", "trial"], how="inner", suffixes=("", "_beh"))
     )
-    common_index = combined[["agent", "trial"]]  # 178 aligned rows
-    print(f"  Aligned rows: {len(combined)}  ({combined['agent'].nunique()} agents)")
 
-    # Trim each individual frame to the same 178 rows
-    temporal   = common_index.merge(temporal,   on=["agent", "trial"], how="left")
-    http       = common_index.merge(http,       on=["agent", "trial"], how="left")
-    tls        = common_index.merge(tls,        on=["agent", "trial"], how="left")
-    behavioral = common_index.merge(behavioral, on=["agent", "trial"], how="left")
+    n_dropped = len(base_index) - len(beh_index)
+    print(f"  Behavioral/combined rows: {len(beh_index)}  "
+          f"({n_dropped} dropped — missing behavioral data)")
+    print(f"  Combined columns: {combined.shape[1]}")
 
-    # ── encode target ─────────────────────────────────────────────────────────
+    # ── Encode target ──────────────────────────────────────────────────────────
     le = LabelEncoder()
-    y  = pd.Series(
-        le.fit_transform(combined["agent"]),
-        index=combined.index,
-        name="agent_label",
-    )
+    le.fit(base_index["agent"])
     print(f"  Classes: {list(le.classes_)}")
 
-    # ── shared stratified split ───────────────────────────────────────────────
-    train_idx, test_idx = train_test_split(
-        combined.index,
-        test_size=test_size,
-        stratify=y,
-        random_state=random_seed,
-    )
-    print(f"  Train: {len(train_idx)} rows  |  Test: {len(test_idx)} rows")
-
-    # ── build per-type datasets ───────────────────────────────────────────────
-    def _make_dataset(df: pd.DataFrame, name: str) -> dict:
-        X = df.drop(columns=["agent", "trial"], errors="ignore")
+    # ── Build datasets — no splitting ──────────────────────────────────────────
+    def _make_dataset(df: pd.DataFrame) -> dict:
+        feature_cols = [c for c in df.columns
+                        if c not in ("agent", "trial", "agent_label")]
         return {
-            "X_train":       X.loc[train_idx].reset_index(drop=True),
-            "X_test":        X.loc[test_idx].reset_index(drop=True),
-            "y_train":       y.loc[train_idx].reset_index(drop=True),
-            "y_test":        y.loc[test_idx].reset_index(drop=True),
-            "feature_names": X.columns.tolist(),
+            "X":             df[feature_cols].reset_index(drop=True),
+            "y":             pd.Series(
+                                 le.transform(df["agent"]),
+                                 name="agent_label",
+                             ).reset_index(drop=True),
+            "trial":         df["trial"].reset_index(drop=True),
+            "feature_names": feature_cols,
         }
 
     datasets = {
-        "temporal":   _make_dataset(temporal,   "temporal"),
-        "http":       _make_dataset(http,        "http"),
-        "tls":        _make_dataset(tls,         "tls"),
-        "behavioral": _make_dataset(behavioral,  "behavioral"),
-        "combined":   _make_dataset(combined,    "combined"),
+        "temporal":   _make_dataset(temporal),
+        "http":       _make_dataset(http),
+        "tls":        _make_dataset(tls),
+        "behavioral": _make_dataset(behavioral_aligned),
+        "combined":   _make_dataset(combined),
     }
 
     print("\n── Feature counts ──────────────────────────────────────")
     for name, ds in datasets.items():
-        print(f"  {name:12s}  {len(ds['feature_names'])} features")
+        print(f"  {name:12s}  {len(ds['feature_names'])} features  "
+              f"{len(ds['X'])} rows")
 
     return datasets, le
-
 
 # ── save to CSV ───────────────────────────────────────────────────────────────
 
@@ -308,13 +315,12 @@ def save_preprocessed(
     os.makedirs(output_dir, exist_ok=True)
 
     for name, ds in datasets.items():
-        for split in ["train", "test"]:
-            X = ds[f"X_{split}"]
-            y = ds[f"y_{split}"]
-            out = pd.concat([y.rename("agent_label"), X], axis=1)
-            path = os.path.join(output_dir, f"{name}_{split}.csv")
-            out.to_csv(path, index=False)
-            print(f"  Saved {path}  {out.shape}")
+        X = ds[f"X"]
+        y = ds[f"y"]
+        out = pd.concat([y.rename("agent_label"), X], axis=1)
+        path = os.path.join(output_dir, f"{name}.csv")
+        out.to_csv(path, index=False)
+        print(f"  Saved {path}  {out.shape}")
 
 
 # ── smoke-test ────────────────────────────────────────────────────────────────
@@ -333,14 +339,14 @@ if __name__ == "__main__":
     )
 
     print("\n── Class distribution (train) ──────────────────────────")
-    counts = datasets["combined"]["y_train"].value_counts().sort_index()
+    counts = datasets["combined"]["y"].value_counts().sort_index()
     for idx, cnt in counts.items():
         print(f"  {le.classes_[idx]:25s}  {cnt}")
 
     print("\n── NaN check ───────────────────────────────────────────")
     for name, ds in datasets.items():
-        nan_train = ds["X_train"].isnull().any().any()
-        nan_test  = ds["X_test"].isnull().any().any()
+        nan_train = ds["X"].isnull().any().any()
+        nan_test  = ds["X"].isnull().any().any()
         print(f"  {name:12s}  NaN in train={nan_train}  NaN in test={nan_test}")
 
     print("\n── Saving CSVs ─────────────────────────────────────────")

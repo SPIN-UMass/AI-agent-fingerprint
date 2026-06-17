@@ -54,6 +54,7 @@ from feature_preprocessing import (
     preprocess_http,
     preprocess_tls,
     preprocess_behavioral,
+    preprocess_all
 )
 
 # ── configuration ──────────────────────────────────────────────────────────────
@@ -62,8 +63,8 @@ HTTP_PATH       = "http_features.csv"
 TLS_PATH        = "tls_features.csv"
 BEHAVIORAL_PATH = "behavioral_features.csv"
 
-INPUT_DIR  = "/mnt/user-data/uploads"
-OUTPUT_DIR = "/mnt/user-data/outputs"
+INPUT_DIR  = "../features"
+OUTPUT_DIR = "./trained_model"
 
 N_ESTIMATORS = 200
 RANDOM_SEED  = 42
@@ -72,57 +73,29 @@ RANDOM_SEED  = 42
 # ── load & align ───────────────────────────────────────────────────────────────
 
 def load_all() -> tuple[dict[str, pd.DataFrame], LabelEncoder]:
-    """
-    Load, preprocess, and inner-join all four feature types on (agent, trial).
-    Returns a dict of aligned DataFrames and a fitted LabelEncoder.
 
-    Each DataFrame has columns:
-        agent | trial | agent_label | <feature columns ...>
-    """
-    temporal   = preprocess_temporal(os.path.join(INPUT_DIR, TEMPORAL_PATH))
-    http       = preprocess_http(os.path.join(INPUT_DIR, HTTP_PATH))
-    tls        = preprocess_tls(os.path.join(INPUT_DIR, TLS_PATH))
-    behavioral = preprocess_behavioral(os.path.join(INPUT_DIR, BEHAVIORAL_PATH))
-
-    # Inner join aligns rows; drops any trials absent from behavioral
-    combined = (
-        temporal
-        .merge(http,       on=["agent", "trial"], how="inner", suffixes=("", "_http"))
-        .merge(tls,        on=["agent", "trial"], how="inner", suffixes=("", "_tls"))
-        .merge(behavioral, on=["agent", "trial"], how="inner", suffixes=("", "_beh"))
-    )
-    common_keys = combined[["agent", "trial"]]
-
-    temporal   = common_keys.merge(temporal,   on=["agent", "trial"], how="left")
-    http       = common_keys.merge(http,       on=["agent", "trial"], how="left")
-    tls        = common_keys.merge(tls,        on=["agent", "trial"], how="left")
-    behavioral = common_keys.merge(behavioral, on=["agent", "trial"], how="left")
-
-    # Encode target on the combined index (shared across all frames)
-    le = LabelEncoder()
-    labels = pd.Series(
-        le.fit_transform(combined["agent"]),
-        index=combined.index,
-        name="agent_label",
+    datasets, le = preprocess_all(
+        temporal_path   = os.path.join(INPUT_DIR, TEMPORAL_PATH),
+        http_path       = os.path.join(INPUT_DIR, HTTP_PATH),
+        tls_path        = os.path.join(INPUT_DIR, TLS_PATH),
+        behavioral_path = os.path.join(INPUT_DIR, BEHAVIORAL_PATH),
     )
 
-    def _attach(df: pd.DataFrame) -> pd.DataFrame:
-        return pd.concat([df, labels], axis=1)
+    # Reconstruct flat DataFrames expected by run_cv and train_and_save:
+    #   agent_label | trial | <features...>
+    frames = {}
+    for name, ds in datasets.items():
+        df = ds["X"].copy()
+        df.insert(0, "trial", ds["trial"])
+        df.insert(0, "agent_label", ds["y"])
+        frames[name] = df
 
-    frames = {
-        "temporal":   _attach(temporal),
-        "http":       _attach(http),
-        "tls":        _attach(tls),
-        "behavioral": _attach(behavioral),
-        "combined":   _attach(combined),
-    }
-
-    print(f"\nAligned rows : {len(combined)}")
+    print(f"\nAligned rows : {len(frames['combined'])}")
     print(f"Classes      : {list(le.classes_)}")
     print("Feature counts:")
     for name, df in frames.items():
-        n_feat = df.shape[1] - 3   # exclude agent, trial, agent_label
-        print(f"  {name:12s}  {n_feat} features")
+        n_feat = df.shape[1] - 2  # exclude agent_label, trial
+        print(f"  {name:12s}  {n_feat} features  {len(df)} rows")
 
     return frames, le
 
@@ -144,23 +117,10 @@ def run_cv(
     frames: dict[str, pd.DataFrame],
     le: LabelEncoder,
 ) -> dict[str, dict]:
-    """
-    Leave-one-trial-out cross-validation for each feature type.
 
-    For each of the 30 trial numbers, rows matching that trial (across all
-    agents) are held out as the test fold. The model trains on the remaining
-    trials. This ensures no trial's data appears in both train and test.
-
-    Returns
-    -------
-    results : dict
-        Per feature type:
-            fold_accuracies, fold_precisions, fold_recalls, fold_f1s,
-            all_true, all_pred
-    """
-    ref       = frames["combined"]
-    fold_ids  = ref["trial"].map(trial_number)
-    folds     = sorted(fold_ids.unique())
+    # Use combined as the fold reference (smallest, 210 rows)
+    ref      = frames["combined"]
+    folds    = sorted(ref["trial"].map(trial_number).unique())
 
     print(f"\nCross-validation: {len(folds)} folds (leave-one-trial-out)\n")
 
@@ -177,10 +137,12 @@ def run_cv(
     }
 
     for fold in folds:
-        test_mask  = fold_ids == fold
-        train_mask = ~test_mask
-
         for name, df in frames.items():
+            # Derive mask from each frame's own trial column
+            fold_ids   = df["trial"].map(trial_number)
+            test_mask  = fold_ids == fold
+            train_mask = ~test_mask
+
             feature_cols = [c for c in df.columns
                             if c not in ("agent", "trial", "agent_label")]
 
@@ -252,23 +214,121 @@ def train_and_save(
 
 
 # ── reporting ──────────────────────────────────────────────────────────────────
+def build_latex_tables(
+    results: dict[str, dict],
+    le: LabelEncoder,
+) -> str:
+    """
+    Build two LaTeX tables from leave-one-trial-out CV results:
+        Table 1 — per-feature-type summary (accuracy, macro P/R/F1)
+        Table 2 — per-agent F1 scores across feature types
+    """
+    def _fmt(val: float) -> str:
+        return f"{val:.3f}"
+
+    # Global agent list — union across all feature types
+    all_agent_names = sorted(set(
+        le.inverse_transform([label])[ 0]
+        for res in results.values()
+        for label in set(res["all_true"]) | set(res["all_pred"])
+    ))
+    agent_labels = {a: a.replace("_", r"\_") for a in all_agent_names}
+    feat_labels  = {f: f.capitalize() for f in results.keys()}
+
+    lines = []
+
+    # ── Table 1: per-feature-type summary ────────────────────────────────────
+    lines += [
+        r"\begin{table}[ht]",
+        r"\centering",
+        r"\caption{ExtraTrees leave-one-trial-out CV results by feature type.}",
+        r"\label{tab:feature_type_results}",
+        r"\begin{tabular}{lrrrr}",
+        r"\toprule",
+        r"Feature Type & Accuracy & Precision & Recall & F1 \\",
+        r"\midrule",
+    ]
+
+    for feat, res in results.items():
+        # CV results store integer labels — decode to strings
+        y_true        = le.inverse_transform(res["all_true"]).tolist()
+        y_pred        = le.inverse_transform(res["all_pred"]).tolist()
+        present_names = sorted(set(y_true) | set(y_pred))
+
+        report = classification_report(
+            y_true, y_pred,
+            target_names=present_names,
+            labels=present_names,
+            output_dict=True,
+            zero_division=0,
+        )
+        acc  = _fmt(accuracy_score(y_true, y_pred))
+        prec = _fmt(report["macro avg"]["precision"])
+        rec  = _fmt(report["macro avg"]["recall"])
+        f1   = _fmt(report["macro avg"]["f1-score"])
+        lines.append(
+            f"{feat_labels[feat]} & {acc} & {prec} & {rec} & {f1} \\\\"
+        )
+
+    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+
+    # ── Table 2: per-agent F1 across feature types ────────────────────────────
+    feat_cols = " & ".join(feat_labels[f] for f in results.keys())
+    col_spec  = "l" + "r" * len(results)
+
+    lines += [
+        r"\begin{table}[ht]",
+        r"\centering",
+        r"\caption{Per-agent F1 score by feature type "
+        r"(leave-one-trial-out CV; -- indicates agent absent from that feature set).}",
+        r"\label{tab:agent_f1_results}",
+        f"\\begin{{tabular}}{{{col_spec}}}",
+        r"\toprule",
+        f"Agent & {feat_cols} \\\\",
+        r"\midrule",
+    ]
+
+    for agent in all_agent_names:
+        row_vals = []
+        for feat, res in results.items():
+            y_true        = le.inverse_transform(res["all_true"]).tolist()
+            y_pred        = le.inverse_transform(res["all_pred"]).tolist()
+            present_names = sorted(set(y_true) | set(y_pred))
+
+            if agent not in present_names:
+                row_vals.append("--")
+                continue
+
+            report = classification_report(
+                y_true, y_pred,
+                target_names=present_names,
+                labels=present_names,
+                output_dict=True,
+                zero_division=0,
+            )
+            row_vals.append(_fmt(report[agent]["f1-score"]))
+
+        lines.append(f"{agent_labels[agent]} & {' & '.join(row_vals)} \\\\")
+
+    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    return "\n".join(lines)
 
 def print_and_save_results(
     results: dict[str, dict],
     le: LabelEncoder,
 ) -> None:
-    """
-    Print per-fold metrics, per-class classification report, and summary
-    table. Also saves cv_results.csv to OUTPUT_DIR.
-    """
-    summary_rows  = []
-    fold_rows     = []
+    summary_rows = []
+    fold_rows    = []
 
     for name, res in results.items():
         accs  = res["fold_accuracies"]
         precs = res["fold_precisions"]
         recs  = res["fold_recalls"]
         f1s   = res["fold_f1s"]
+
+        # Derive classes actually present in this feature type's predictions
+        present_labels = sorted(set(res["all_true"]) | set(res["all_pred"]))
+        present_names  = le.inverse_transform(present_labels)
 
         print(f"\n{'='*65}")
         print(f"  ExtraTrees  |  {name}")
@@ -295,7 +355,8 @@ def print_and_save_results(
         print(f"\n  Classification report (aggregated across all folds):")
         print(classification_report(
             res["all_true"], res["all_pred"],
-            target_names=le.classes_,
+            labels=present_labels,       # ← only labels present in this feature type
+            target_names=present_names,  # ← matching names for those labels
             zero_division=0,
         ))
 
@@ -331,6 +392,19 @@ def print_and_save_results(
         summary_df.to_csv(f, index=False)
 
     print(f"\n  CV results saved to {cv_path}")
+
+    # ── LaTeX tables ──────────────────────────────────────────────────────────
+    latex = build_latex_tables(results, le)
+    print(f"\n{'='*65}")
+    print("  LATEX TABLES")
+    print(f"{'='*65}")
+    print(latex)
+
+    latex_path = os.path.join(OUTPUT_DIR, "cv_results_tables.tex")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    with open(latex_path, "w") as f:
+        f.write(latex)
+    print(f"\n  LaTeX saved to {latex_path}")
 
 
 # ── main ───────────────────────────────────────────────────────────────────────

@@ -20,7 +20,8 @@ plt.rcParams.update({
     # "figure.titlesize": 16    # figure title
 })
 
-COLORS = ["#378ADD", "#BA7517", "#1D9E75", "#D85A30", "#7F77DD", "#D4537E"]
+COLORS = ["#0072B2", "#E69F00", "#009E3F", "#CC79A7", "#D52300", "#56D5E9"]
+
 agent_labels = {
     "autogen_websurfer": "AutoGen",
     "browser_use": "Browser Use",

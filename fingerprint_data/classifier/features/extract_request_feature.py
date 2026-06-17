@@ -70,6 +70,7 @@ import warnings
 from pathlib import Path
 from collections import Counter
 from datetime import datetime
+from urllib.parse import urlparse
 
 import numpy as np
 import pandas as pd
@@ -141,15 +142,7 @@ def parse_ts(ts: str) -> datetime:
 
 # ─── SENBEACON FILTER ─────────────────────────────────────────────────────────
 
-def filter_senbeacon(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
-    """
-    Remove POST /collect rows that are sendBeacon flushes from logger.js.
-
-    Rule 1: POST arrives within UNLOAD_WINDOW_MS before the next page GET.
-    Rule 2: Multiple /collect POSTs cluster within BURST_WINDOW_MS.
-    Rule 3: Referer ends in .html.
-    Removed when Rule 1 AND (Rule 2 OR Rule 3).
-    """
+def filter_sendbeacon(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
     if df.empty:
         return df, 0
 
@@ -165,39 +158,54 @@ def filter_senbeacon(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
         n_removed,
     )
 
-    # collect_mask = (df["method"] == "POST") & (df["path"] == COLLECT_ENDPOINT)
-    # collect_idx  = df.index[collect_mask].tolist()
-    # if not collect_idx:
-    #     return df, 0
 
-    # page_ts = df.loc[
-    #     df["path"].str.endswith(".html", na=False), "timestamp"
-    # ].sort_values()
+# EXPERIMENT_PAGES = {
+#     "/", "/subscribe-v1.html", "/subscribe-v2.html", "/subscribe-v3.html",
+#     "/s2-scroll-gate.html", "/s3-hover-reveal.html", "/s4-dom-mismatch.html",
+#     "/s5-delayed-feedback.html",
+# }
 
-    # def ms_to_next_page(ts):
-    #     future = page_ts[page_ts > ts]
-    #     return float("nan") if future.empty else (future.iloc[0] - ts).total_seconds() * 1000
+# def filter_sendbeacon(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
+#     if df.empty:
+#         return df, 0
 
-    # flagged = set()
-    # for idx in collect_idx:
-    #     row   = df.loc[idx]
-    #     ts    = row["timestamp"]
-    #     gap   = ms_to_next_page(ts)
-    #     rule1 = (not np.isnan(gap)) and (gap <= UNLOAD_WINDOW_MS)
-    #     if not rule1:
-    #         continue
-    #     other_ts = df.loc[collect_mask & (df.index != idx), "timestamp"]
-    #     rule2 = any(abs((ts - ot).total_seconds() * 1000) <= BURST_WINDOW_MS
-    #                 for ot in other_ts)
-    #     rule3 = bool(re.search(r"\.html$", str(row.get("referer", "") or "")))
-    #     if rule2 or rule3:
-    #         flagged.add(idx)
+#     # Resolve the content-type column name flexibly
+#     ct_col = None
+#     for candidate in ("content_type", "http_content_type", "Content-Type"):
+#         if candidate in df.columns:
+#             ct_col = candidate
+#             break
 
-    # if not flagged:
-    #     return df, 0
-    # filtered = df.drop(index=list(flagged)).reset_index(drop=True)
-    # return filtered, len(flagged)
+#     def is_experiment_referer(referer) -> bool:
+#         if not referer or not isinstance(referer, str):
+#             return False
+#         return urlparse(referer).path in EXPERIMENT_PAGES
 
+#     def sec_fetch_consistent(row) -> bool:
+#         mode = row.get("sec_fetch_mode", "") or ""
+#         dest = row.get("sec_fetch_dest", "") or ""
+#         site = row.get("sec_fetch_site", "") or ""
+#         if mode and mode != "cors":
+#             return False
+#         if dest and dest != "empty":
+#             return False
+#         if site and site not in ("same-origin", "same-site"):
+#             return False
+#         return True
+
+#     beacon_mask = (
+#         df["method"].eq("POST")
+#         & df["path"].eq(COLLECT_ENDPOINT)
+#         & df["referer"].apply(is_experiment_referer)
+#         & df.apply(sec_fetch_consistent, axis=1)
+#     )
+
+#     # Add content-type check only if the column was found
+#     if ct_col:
+#         beacon_mask &= df[ct_col].str.contains("application/json", na=False)
+
+#     n_removed = int(beacon_mask.sum())
+#     return df.loc[~beacon_mask].reset_index(drop=True), n_removed
 
 # ─── RAW RECORD LOADER ────────────────────────────────────────────────────────
 
@@ -759,7 +767,7 @@ Examples
 
         n_raw = len(df_raw)
         if do_filter:
-            df, n_removed = filter_senbeacon(df_raw)
+            df, n_removed = filter_sendbeacon(df_raw)
             filter_log.append({
                 "agent": agent, "trial": trial,
                 "n_raw": n_raw, "n_removed": n_removed,

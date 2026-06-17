@@ -82,6 +82,7 @@ import sys
 import argparse
 import warnings
 from pathlib import Path
+from urllib.parse import urlparse
 
 import numpy as np
 import pandas as pd
@@ -271,19 +272,7 @@ def parse_request(rec: dict) -> dict:
 
 # ── sendBeacon filter ─────────────────────────────────────────────────────────
 
-def filter_senbeacon(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
-    """
-    Remove POST /collect sendBeacon rows using Rules 1 + 2 from tls_analysis.py.
-
-    Rule 1 (temporal): POST arrives within UNLOAD_WINDOW_MS before next page GET.
-    Rule 2 (burst):    Multiple /collect POSTs within BURST_WINDOW_MS of each other.
-
-    Row removed when Rule 1 AND Rule 2 are both satisfied.
-
-    Note: Rule 3 (Referer ends in .html) from tls_analysis.py requires the
-    Referer header, which is not present in requests.jsonl records.  Rules 1+2
-    alone are sufficient to catch all genuine beforeunload/pagehide bursts.
-    """
+def filter_sendbeacon(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
     if df.empty:
         return df, 0
 
@@ -298,37 +287,54 @@ def filter_senbeacon(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
         df.loc[~collect_mask].reset_index(drop=True),
         n_removed,
     )
-    # collect_mask = (df["method"] == "POST") & (df["path"] == COLLECT_ENDPOINT)
-    # collect_idx  = df.index[collect_mask].tolist()
-    # if not collect_idx:
-    #     return df, 0
 
-    # page_ts = df.loc[
-    #     df["path"].str.endswith(".html", na=False), "timestamp"
-    # ].sort_values()
+# EXPERIMENT_PAGES = {
+#     "/", "/subscribe-v1.html", "/subscribe-v2.html", "/subscribe-v3.html",
+#     "/s2-scroll-gate.html", "/s3-hover-reveal.html", "/s4-dom-mismatch.html",
+#     "/s5-delayed-feedback.html",
+# }
 
-    # def ms_to_next_page(ts):
-    #     future = page_ts[page_ts > ts]
-    #     if future.empty:
-    #         return float("nan")
-    #     return (future.iloc[0] - ts).total_seconds() * 1000
+# def filter_sendbeacon(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
+#     if df.empty:
+#         return df, 0
 
-    # flagged: set = set()
-    # for idx in collect_idx:
-    #     ts  = df.loc[idx, "timestamp"]
-    #     gap = ms_to_next_page(ts)
-    #     # Rule 1
-    #     if np.isnan(gap) or gap > UNLOAD_WINDOW_MS:
-    #         continue
-    #     # Rule 2
-    #     other_ts = df.loc[collect_mask & (df.index != idx), "timestamp"]
-    #     if any(abs((ts - ot).total_seconds() * 1000) <= BURST_WINDOW_MS
-    #            for ot in other_ts):
-    #         flagged.add(idx)
+#     # Resolve the content-type column name flexibly
+#     ct_col = None
+#     for candidate in ("content_type", "http_content_type", "Content-Type"):
+#         if candidate in df.columns:
+#             ct_col = candidate
+#             break
 
-    # if not flagged:
-    #     return df, 0
-    # return df.drop(index=list(flagged)).reset_index(drop=True), len(flagged)
+#     def is_experiment_referer(referer) -> bool:
+#         if not referer or not isinstance(referer, str):
+#             return False
+#         return urlparse(referer).path in EXPERIMENT_PAGES
+
+#     def sec_fetch_consistent(row) -> bool:
+#         mode = row.get("sec_fetch_mode", "") or ""
+#         dest = row.get("sec_fetch_dest", "") or ""
+#         site = row.get("sec_fetch_site", "") or ""
+#         if mode and mode != "cors":
+#             return False
+#         if dest and dest != "empty":
+#             return False
+#         if site and site not in ("same-origin", "same-site"):
+#             return False
+#         return True
+
+#     beacon_mask = (
+#         df["method"].eq("POST")
+#         & df["path"].eq(COLLECT_ENDPOINT)
+#         & df["referer"].apply(is_experiment_referer)
+#         & df.apply(sec_fetch_consistent, axis=1)
+#     )
+
+#     # Add content-type check only if the column was found
+#     if ct_col:
+#         beacon_mask &= df[ct_col].str.contains("application/json", na=False)
+
+#     n_removed = int(beacon_mask.sum())
+#     return df.loc[~beacon_mask].reset_index(drop=True), n_removed
 
 # ── Derived columns (per-request binary/numeric signals) ─────────────────────
 
@@ -589,7 +595,7 @@ def load_trial(agent: str, trial_label: str,
 
     n_raw = len(df)
     if do_filter:
-        df, n_removed = filter_senbeacon(df)
+        df, n_removed = filter_sendbeacon(df)
         note = f", {n_removed} sendBeacon removed" if n_removed else ""
     else:
         note = " (filter off)"

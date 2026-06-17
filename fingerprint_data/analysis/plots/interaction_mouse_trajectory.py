@@ -77,12 +77,12 @@ for agent in agents:
 final_df = pd.concat(all_rows, ignore_index=True)
 
 colors = {
-    "autogen_websurfer": "#2563EB",
-    "browser_use": "#0D9488",
-    "claude_computer_use": "#D97706",
-    "gemini_computer_use": "#DC2626",
-    "operator": "#7C3AED",
-    "skyvern": "#16A34A",
+    "autogen_websurfer": "#0072B2",
+    "browser_use": "#E69F00",
+    "claude_computer_use": "#009E3F",
+    "gemini_computer_use": "#CC79A7",
+    "operator": "#D52300",
+    "skyvern": "#56D5E9",
 }
 
 fig, ax = plt.subplots(figsize=(10, 6))

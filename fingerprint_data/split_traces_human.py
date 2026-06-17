@@ -6,8 +6,6 @@ from datetime import timezone, timedelta
 from zoneinfo import ZoneInfo
 
 
-base = './agent_transcripts/'
-
 def parse_ts(ts):
     # Convert Z → +00:00 and trim nanoseconds to microseconds
     if ts.endswith("Z"):
@@ -21,10 +19,10 @@ def parse_ts(ts):
 
 if __name__=="__main__":
     year = "2026"
-    agent = "human"
+    agent = "human-more"
     eastern = ZoneInfo("America/New_York")
 
-    with open('human_timestamp.txt', 'r') as file:
+    with open('human_extra_timestamp.txt', 'r') as file:
         for count, promt in enumerate(file, start=1):
             trial = f"trial-{count:03d}"
             date_part, start_time, _, end_time = promt.split()

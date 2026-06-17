@@ -1,9 +1,9 @@
 """
 evaluate_trials.py
 ------------------
-Runs inference across all 180 trials (30 × 6 agents) using the saved
-ExtraTrees models and plots how accuracy and F1 improve as more HTTP
-requests are seen within each trial.
+Runs inference across all trials using the saved ExtraTrees models and
+plots how accuracy and F1 improve as more HTTP requests are seen within
+each trial.
 
 Directory structure expected
 ----------------------------
@@ -14,10 +14,8 @@ Directory structure expected
         interactions.jsonl
       trial-002/
         ...
-    browser_use/
-      trial-001/
-        ...
-    claude_computer_use/  gemini_computer_use/  operator/  skyvern/
+    browser_use/  claude_computer_use/  gemini_computer_use/
+    heritrix/  human/  nutch/  operator/  scrapy/  skyvern/
 
 For each trial, inference is run at each cumulative request count
 (1 request seen, 2 requests seen, …, all requests seen). At each
@@ -26,10 +24,10 @@ to the ground truth agent label.
 
 Metrics computed
 ----------------
-  - Accuracy        : fraction of trials correctly predicted at each N
-  - Macro F1        : averaged over all 6 agent classes
-  - Per-agent F1    : one curve per agent
-  - Per-model curves: separate line per feature type (combined shown by default)
+  - Accuracy     : fraction of trials correctly predicted at each N
+  - Macro F1     : averaged over all agent classes present
+  - Per-agent F1 : one curve per agent
+  - Per-model    : separate line per feature type
 
 Output files
 ------------
@@ -42,12 +40,11 @@ Output files
 Usage
 -----
   python evaluate_trials.py \\
-      --data-dir   ./data \\
-      --model-dir  ./models \\
-      --extractor-dir ./extractors \\
+      --data-dir   ../data \\
+      --model-dir  ../features/trained_model \\
+      --feature-dir ../features \\
       --output-dir ./eval_results \\
-      --max-requests 30        # truncate x-axis (optional)
-      --n-jobs 1               # parallel trials (optional)
+      --max-requests 30
 """
 
 import sys
@@ -72,25 +69,36 @@ warnings.filterwarnings("ignore")
 
 # ── constants ──────────────────────────────────────────────────────────────────
 FEATURE_TYPES = ["temporal", "http", "tls", "behavioral", "combined"]
+
+# All 10 agents matching your LabelEncoder classes
 AGENTS = [
     "autogen_websurfer", "browser_use", "claude_computer_use",
-    "gemini_computer_use", "operator", "skyvern",
+    "gemini_computer_use", "heritrix", "human",
+    "nutch", "operator", "scrapy", "skyvern",
 ]
 AGENT_SHORT = {
-    "autogen_websurfer":   "autogen",
-    "browser_use":         "browser_use",
-    "claude_computer_use": "claude",
-    "gemini_computer_use": "gemini",
-    "operator":            "operator",
-    "skyvern":             "skyvern",
+    "autogen_websurfer":   "AutoGen",
+    "browser_use":         "Browser Use",
+    "claude_computer_use": "Claude",
+    "gemini_computer_use": "Gemini",
+    "heritrix":            "Heritrix",
+    "human":               "Human",
+    "nutch":               "Nutch",
+    "operator":            "Operator",
+    "scrapy":              "Scrapy",
+    "skyvern":             "Skyvern",
 }
 AGENT_COLORS = {
     "autogen_websurfer":   "#4C72B0",
     "browser_use":         "#DD8452",
     "claude_computer_use": "#55A868",
     "gemini_computer_use": "#C44E52",
-    "operator":            "#8172B3",
-    "skyvern":             "#937860",
+    "heritrix":            "#8172B3",
+    "human":               "#937860",
+    "nutch":               "#DA8BC3",
+    "operator":            "#8C8C8C",
+    "scrapy":              "#CCB974",
+    "skyvern":             "#64B5CD",
 }
 MODEL_COLORS = {
     "temporal":   "#4C72B0",
@@ -99,8 +107,15 @@ MODEL_COLORS = {
     "behavioral": "#C44E52",
     "combined":   "#000000",
 }
+MODEL_LABELS = {
+    "temporal": "Temporal",
+    "http": "HTTP",
+    "tls": "TLS",
+    "behavioral": "Behavioral",
+    "combined": "Combined",
+}
 
-# Label-encoder maps (must match preprocess.py)
+# Label-encoder maps (must match preprocess.py / feature_preprocessing.py)
 SF_SITE_LE   = {"none": 0, "same-origin": 1, "unknown": 2}
 UA_FAMILY_LE = {
     "chrome": 0, "curl": 1, "edge": 2, "firefox": 3, "go": 4,
@@ -119,6 +134,13 @@ NS_HDR_COLS = [
     "ns_hdr_Amp-Cache-Transform","ns_hdr_Sec-Gpc",   "ns_hdr_Cf-Visitor",
 ]
 
+# Agents that have behavioral data (210 rows in your dataset)
+# Combined model will return None for agents not in this set
+AGENTS_WITH_BEHAVIORAL = {
+    "autogen_websurfer", "browser_use", "claude_computer_use",
+    "gemini_computer_use", "operator", "skyvern",
+}
+
 
 # ── timestamp helper ───────────────────────────────────────────────────────────
 
@@ -134,7 +156,7 @@ def discover_trials(data_dir: Path) -> list[dict]:
     """
     Walk data_dir and return a list of dicts:
         {agent, trial, requests_path, interactions_path}
-    Expects structure: data_dir/<agent>/<trial>/requests.jsonl
+    interactions_path may be None if interactions.jsonl does not exist.
     """
     trials = []
     for agent_dir in sorted(data_dir.iterdir()):
@@ -148,13 +170,15 @@ def discover_trials(data_dir: Path) -> list[dict]:
                 continue
             req_path = trial_dir / "requests.jsonl"
             int_path = trial_dir / "interactions.jsonl"
-            if req_path.exists() and int_path.exists():
-                trials.append({
-                    "agent":             agent,
-                    "trial":             trial_dir.name,
-                    "requests_path":     req_path,
-                    "interactions_path": int_path,
-                })
+            if not req_path.exists():
+                continue
+            trials.append({
+                "agent":             agent,
+                "trial":             trial_dir.name,
+                "requests_path":     req_path,
+                # interactions may not exist for non-browser agents
+                "interactions_path": int_path if int_path.exists() else None,
+            })
     return trials
 
 
@@ -186,13 +210,18 @@ def write_tmp_requests(records: list[dict]) -> str:
     return tmp.name
 
 
-def write_tmp_interactions(interactions_path: Path,
-                           cutoff_ts) -> str:
+def write_tmp_interactions(interactions_path: Path, cutoff_ts) -> str:
     """
     Write interaction events whose timestamp ≤ cutoff_ts to a temp file.
-    Preserves the per-page batch structure the extractors expect.
+    Returns path to the temp file, or None if interactions_path is None.
     """
-    from collections import defaultdict
+    if interactions_path is None:
+        # Write empty file so extractors don't crash
+        tmp = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".jsonl", delete=False, prefix="ev_int_")
+        tmp.close()
+        return tmp.name
+
     batch_events: dict[str, list] = defaultdict(list)
     batch_meta:   dict[str, dict] = {}
 
@@ -232,7 +261,14 @@ def write_tmp_interactions(interactions_path: Path,
 
 # ── feature extraction ─────────────────────────────────────────────────────────
 
-def extract_all(req_path: str, int_path: str) -> dict[str, dict]:
+def extract_all(req_path: str, int_path: str,
+                agent: str) -> dict[str, dict]:
+    """
+    Extract all feature types from temporary JSONL files.
+    Returns dict with keys: temporal, http, tls, behavioral.
+    Values are raw feature dicts; empty dict on extraction failure.
+    behavioral is skipped for agents without interaction logs.
+    """
     import extract_request_feature    as req_ext
     import extract_http_feature       as http_ext
     import extract_tls_feature        as tls_ext
@@ -242,35 +278,48 @@ def extract_all(req_path: str, int_path: str) -> dict[str, dict]:
     ip  = Path(int_path)
     raw = {}
 
+    # temporal
     try:
         df = req_ext.load_requests(rp)
         f  = req_ext.extract_features(df)
-        f["req_rate_hz_median"] = f.get("req_rate_hz", 0.0)
-        f["req_rate_hz_cv"]     = 0.0
+        f.setdefault("req_rate_hz_median", f.get("req_rate_hz", 0.0))
+        f.setdefault("req_rate_hz_cv", 0.0)
         raw["temporal"] = f
-    except Exception:
+    except Exception as e:
+        print(f"    [warn] temporal extraction failed: {e}")
         raw["temporal"] = {}
 
+    # http
     try:
-        df = http_ext.load_trial(rp, agent="rt", trial="rt", do_filter=True)
+        df = http_ext.load_trial(rp, agent=agent, trial="rt", do_filter=True)
         f  = http_ext.build_trial_features(df).to_dict("records")[0]
         raw["http"] = f
-    except Exception:
+    except Exception as e:
+        print(f"    [warn] http extraction failed: {e}")
         raw["http"] = {}
 
+    # tls
     try:
-        df = tls_ext.load_trial("rt", "rt", rp, do_filter=True)
-        f  = (tls_ext.aggregate_trial(df).to_dict()
-              if df is not None and not df.empty else {})
-        raw["tls"] = f
-    except Exception:
+        df = tls_ext.load_trial(agent, "rt", rp, do_filter=True)
+        raw["tls"] = (
+            tls_ext.aggregate_trial(df).to_dict()
+            if df is not None and not df.empty
+            else {}
+        )
+    except Exception as e:
+        print(f"    [warn] tls extraction failed: {e}")
         raw["tls"] = {}
 
-    try:
-        flushes, evs = beh_ext.load_jsonl(ip)
-        raw["behavioral"] = beh_ext.extract_features(flushes, evs)
-    except Exception:
-        raw["behavioral"] = {}
+    # behavioral — only for agents with interaction logs
+    if agent in AGENTS_WITH_BEHAVIORAL:
+        try:
+            flushes, evs  = beh_ext.load_jsonl(ip)
+            raw["behavioral"] = beh_ext.extract_features(flushes, evs)
+        except Exception as e:
+            print(f"    [warn] behavioral extraction failed: {e}")
+            raw["behavioral"] = {}
+    else:
+        raw["behavioral"] = None  # intentionally absent
 
     return raw
 
@@ -306,16 +355,29 @@ def _encode_http(raw_http: dict, feature_cols: list) -> dict:
 
 
 def align_features(raw: dict, feat_type: str,
-                   feature_cols: list) -> pd.DataFrame:
+                   feature_cols: list) -> pd.DataFrame | None:
+    """
+    Build a single-row DataFrame aligned to feature_cols.
+    Returns None if required data is absent (e.g. behavioral for
+    agents without interaction logs).
+    """
     if feat_type == "temporal":
         row = {c: raw["temporal"].get(c, np.nan) for c in feature_cols}
+
     elif feat_type == "http":
         row = _encode_http(raw["http"], feature_cols)
+
     elif feat_type == "tls":
         row = {c: raw["tls"].get(c, np.nan) for c in feature_cols}
+
     elif feat_type == "behavioral":
+        if raw["behavioral"] is None:
+            return None  # agent has no behavioral data
         row = {c: raw["behavioral"].get(c, np.nan) for c in feature_cols}
-    else:   # combined
+
+    else:  # combined
+        if raw["behavioral"] is None:
+            return None  # combined requires behavioral
         merged = {}
         merged.update(raw["temporal"])
         merged.update(raw["tls"])
@@ -328,20 +390,29 @@ def align_features(raw: dict, feat_type: str,
                           merged.get("req_rate_hz", 0.0))
         merged.setdefault("req_rate_hz_cv", 0.0)
         row = {c: merged.get(c, np.nan) for c in feature_cols}
+
     return pd.DataFrame([row])[feature_cols].fillna(0)
 
 
 # ── inference ──────────────────────────────────────────────────────────────────
 
-def infer(raw: dict, models: dict) -> dict[str, str]:
-    """Return {feat_type: predicted_agent} for all five models."""
+def infer(raw: dict, models: dict, agent: str) -> dict[str, str | None]:
+    """
+    Return {feat_type: predicted_agent} for all five models.
+    Value is None if the feature type is unavailable for this agent
+    (behavioral/combined for agents without interaction logs).
+    """
     preds = {}
     for ft, (clf, le, feature_cols) in models.items():
         try:
-            X    = align_features(raw, ft, feature_cols)
-            pred = clf.predict(X)[0]
+            X = align_features(raw, ft, feature_cols)
+            if X is None:
+                preds[ft] = None  # not available for this agent
+                continue
+            pred      = clf.predict(X)[0]
             preds[ft] = le.inverse_transform([pred])[0]
-        except Exception:
+        except Exception as e:
+            print(f"    [warn] inference failed for {ft}: {e}")
             preds[ft] = "error"
     return preds
 
@@ -353,9 +424,12 @@ def evaluate_trial(trial: dict, models: dict,
     """
     Run inference at each cumulative request count for one trial.
     Returns list of row dicts for results_per_checkpoint.csv.
+    Prediction is None (not 'error') when the feature type is
+    structurally unavailable for this agent.
     """
     req_records = load_sorted_requests(trial["requests_path"])
     n_total     = min(len(req_records), max_requests)
+    agent       = trial["agent"]
     rows        = []
 
     for n_req in range(1, n_total + 1):
@@ -367,9 +441,10 @@ def evaluate_trial(trial: dict, models: dict,
             trial["interactions_path"], cutoff_ts)
 
         try:
-            raw   = extract_all(req_tmp, int_tmp)
-            preds = infer(raw, models)
-        except Exception:
+            raw   = extract_all(req_tmp, int_tmp, agent)
+            preds = infer(raw, models, agent)
+        except Exception as e:
+            print(f"    [error] trial evaluation failed: {e}")
             preds = {ft: "error" for ft in FEATURE_TYPES}
         finally:
             for p in [req_tmp, int_tmp]:
@@ -379,12 +454,12 @@ def evaluate_trial(trial: dict, models: dict,
                     pass
 
         row = {
-            "agent":   trial["agent"],
-            "trial":   trial["trial"],
-            "n_req":   n_req,
+            "agent": agent,
+            "trial": trial["trial"],
+            "n_req": n_req,
         }
         for ft in FEATURE_TYPES:
-            row[f"pred_{ft}"] = preds.get(ft, "error")
+            row[f"pred_{ft}"] = preds.get(ft)  # None for unavailable
         rows.append(row)
 
     return rows
@@ -395,34 +470,50 @@ def evaluate_trial(trial: dict, models: dict,
 def compute_metrics(raw_df: pd.DataFrame,
                     max_requests: int) -> pd.DataFrame:
     """
-    For each n_req value, compute accuracy and macro-F1 per model,
+    For each n_req, compute accuracy and macro-F1 per model,
     and per-agent F1 for the combined model.
 
-    Returns a DataFrame with one row per n_req.
+    Rows where pred is None (agent has no behavioral/combined data)
+    are excluded from behavioral and combined metrics but included
+    in temporal/http/tls metrics.
     """
     rows = []
     for n_req in range(1, max_requests + 1):
-        # Use only trials that have at least n_req requests
         df_n = raw_df[raw_df["n_req"] == n_req]
         if df_n.empty:
             continue
 
-        y_true = df_n["agent"].tolist()
-        row    = {"n_req": n_req, "n_trials": len(df_n)}
+        row = {"n_req": n_req, "n_trials": len(df_n)}
 
         for ft in FEATURE_TYPES:
-            y_pred = df_n[f"pred_{ft}"].tolist()
+            # Exclude rows where prediction is None (structurally absent)
+            df_ft   = df_n[df_n[f"pred_{ft}"].notna()]
+            y_true  = df_ft["agent"].tolist()
+            y_pred  = df_ft[f"pred_{ft}"].tolist()
+
+            if not y_true:
+                row[f"accuracy_{ft}"] = np.nan
+                row[f"f1_macro_{ft}"] = np.nan
+                continue
+
+            present_agents = sorted(set(y_true) | set(y_pred))
             acc    = accuracy_score(y_true, y_pred)
             f1_mac = f1_score(y_true, y_pred, average="macro",
-                              labels=AGENTS, zero_division=0)
-            row[f"accuracy_{ft}"]  = round(acc,    4)
-            row[f"f1_macro_{ft}"]  = round(f1_mac, 4)
+                              labels=present_agents, zero_division=0)
+            row[f"accuracy_{ft}"] = round(acc,    4)
+            row[f"f1_macro_{ft}"] = round(f1_mac, 4)
 
-        # Per-agent F1 for combined model
-        y_pred_comb = df_n["pred_combined"].tolist()
+        # Per-agent F1 for combined model (only agents with behavioral data)
+        df_comb     = df_n[df_n["pred_combined"].notna()]
+        y_true_comb = df_comb["agent"].tolist()
+        y_pred_comb = df_comb["pred_combined"].tolist()
+
         for agent in AGENTS:
+            if agent not in AGENTS_WITH_BEHAVIORAL:
+                row[f"f1_{AGENT_SHORT[agent]}"] = np.nan
+                continue
             f1_ag = f1_score(
-                [1 if a == agent else 0 for a in y_true],
+                [1 if a == agent else 0 for a in y_true_comb],
                 [1 if p == agent else 0 for p in y_pred_comb],
                 zero_division=0,
             )
@@ -435,88 +526,100 @@ def compute_metrics(raw_df: pd.DataFrame,
 
 # ── plotting ───────────────────────────────────────────────────────────────────
 
-def _style_ax(ax, xlabel: str, ylabel: str, title: str) -> None:
-    ax.set_xlabel(xlabel, fontsize=11)
-    ax.set_ylabel(ylabel, fontsize=11)
-    ax.set_title(title, fontsize=12, fontweight="bold")
+def _style_ax(ax, xlabel: str, ylabel: str) -> None:
+    plt.rcParams.update({
+        "font.size": 20,          # base font size
+        # "axes.titlesize": 14,     # title size
+        # "axes.labelsize": 20,     # x/y label size
+        # "xtick.labelsize": 16,    # x tick labels
+        # "ytick.labelsize": 16,    # y tick labels
+        "legend.fontsize": 16,    # legend
+        # "figure.titlesize": 16    # figure title
+    })
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    # ax.set_title(title, fontsize=12, fontweight="bold")
     ax.set_xlim(left=1)
     ax.set_ylim(-0.02, 1.05)
-    ax.yaxis.set_major_formatter(mticker.PercentFormatter(xmax=1, decimals=0))
-    ax.legend(fontsize=9, loc="lower right")
+    ax.yaxis.set_major_formatter(
+        mticker.FuncFormatter(lambda y, _: f"{100*y:.0f}")
+    )
+    ax.legend(loc="lower right")
     ax.grid(axis="y", alpha=0.3)
     ax.spines[["top", "right"]].set_visible(False)
 
 
 def plot_accuracy_f1(metrics: pd.DataFrame, output_dir: Path) -> None:
-    """Accuracy and macro-F1 for the combined model on one plot."""
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5))
-    fig.suptitle(
-        "Agent Classification vs. Requests Seen\n(ExtraTrees, 180 trials)",
-        fontsize=13, fontweight="bold")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    # fig.suptitle(
+    #     "Agent Classification vs. Requests Seen\n(ExtraTrees)",
+    #     fontsize=13, fontweight="bold")
 
     x = metrics["n_req"]
 
-    # Left: accuracy per model
-    ax = axes[0]
-    for ft in FEATURE_TYPES:
-        lw = 2.5 if ft == "combined" else 1.2
-        ls = "-"  if ft == "combined" else "--"
-        ax.plot(x, metrics[f"accuracy_{ft}"],
-                label=ft, color=MODEL_COLORS[ft], lw=lw, ls=ls)
-    _style_ax(ax, "Requests seen", "Accuracy",
-              "Accuracy vs. Requests Seen")
+    # ax = axes[0]
+    # for ft in FEATURE_TYPES:
+    #     col = f"accuracy_{ft}"
+    #     if metrics[col].isna().all():
+    #         continue
+    #     lw = 2.5 if ft == "combined" else 1.2
+    #     ls = "-"  if ft == "combined" else "--"
+    #     ax.plot(x, metrics[col],
+    #             label=ft, color=MODEL_COLORS[ft], lw=lw, ls=ls)
+    # _style_ax(ax, "Requests seen", "Accuracy")
 
-    # Right: macro-F1 per model
-    ax = axes[1]
+    # ax = axes[1]
     for ft in FEATURE_TYPES:
+        col = f"f1_macro_{ft}"
+        if metrics[col].isna().all():
+            continue
         lw = 2.5 if ft == "combined" else 1.2
         ls = "-"  if ft == "combined" else "--"
-        ax.plot(x, metrics[f"f1_macro_{ft}"],
-                label=ft, color=MODEL_COLORS[ft], lw=lw, ls=ls)
-    _style_ax(ax, "Requests seen", "Macro F1",
-              "Macro F1 vs. Requests Seen")
+        ax.plot(x, metrics[col],
+                label=MODEL_LABELS[ft], color=MODEL_COLORS[ft], lw=lw, ls=ls)
+    _style_ax(ax, "Requests seen", "Macro F1 (%)")
 
     plt.tight_layout()
-    path = output_dir / "accuracy_f1_curve.png"
+    path = output_dir / "request_eval_f1_curve.pdf"
     plt.savefig(path, dpi=150, bbox_inches="tight")
     plt.close()
     print(f"  Saved → {path}")
 
 
 def plot_per_agent_f1(metrics: pd.DataFrame, output_dir: Path) -> None:
-    """Per-agent F1 (combined model) over requests seen."""
     fig, ax = plt.subplots(figsize=(10, 6))
     x = metrics["n_req"]
 
     for agent in AGENTS:
-        col   = f"f1_{AGENT_SHORT[agent]}"
-        label = AGENT_SHORT[agent]
+        col = f"f1_{AGENT_SHORT[agent]}"
+        if col not in metrics.columns or metrics[col].isna().all():
+            continue
         ax.plot(x, metrics[col],
-                label=label, color=AGENT_COLORS[agent], lw=2.0, marker="o",
-                markersize=3)
+                label=AGENT_SHORT[agent],
+                color=AGENT_COLORS[agent], lw=2.0, marker="o", markersize=3)
 
-    _style_ax(ax, "Requests seen", "F1 (binary, one-vs-rest)",
-              "Per-Agent F1 vs. Requests Seen\n(combined model)")
-    path = output_dir / "per_agent_f1_curve.png"
+    _style_ax(ax, "Requests seen", "F1")
+    path = output_dir / "per_agent_f1_curve.pdf"
     plt.savefig(path, dpi=150, bbox_inches="tight")
     plt.close()
     print(f"  Saved → {path}")
 
 
 def plot_per_model_accuracy(metrics: pd.DataFrame, output_dir: Path) -> None:
-    """Per-model accuracy curves on one plot."""
     fig, ax = plt.subplots(figsize=(10, 6))
     x = metrics["n_req"]
 
     for ft in FEATURE_TYPES:
+        col = f"accuracy_{ft}"
+        if metrics[col].isna().all():
+            continue
         lw = 2.5 if ft == "combined" else 1.5
-        ax.plot(x, metrics[f"accuracy_{ft}"],
-                label=ft, color=MODEL_COLORS[ft], lw=lw,
+        ax.plot(x, metrics[col],
+                label=MODEL_LABELS[ft], color=MODEL_COLORS[ft], lw=lw,
                 ls="-" if ft == "combined" else "--")
 
-    _style_ax(ax, "Requests seen", "Accuracy",
-              "Per-Model Accuracy vs. Requests Seen")
-    path = output_dir / "per_model_accuracy_curve.png"
+    _style_ax(ax, "Requests seen", "Accuracy (%)")
+    path = output_dir / "per_model_accuracy_curve.pdf"
     plt.savefig(path, dpi=150, bbox_inches="tight")
     plt.close()
     print(f"  Saved → {path}")
@@ -524,14 +627,14 @@ def plot_per_model_accuracy(metrics: pd.DataFrame, output_dir: Path) -> None:
 
 # ── main ───────────────────────────────────────────────────────────────────────
 
-def run(data_dir:      Path,
-        model_dir:     Path,
-        extractor_dir: str | None,
-        output_dir:    Path,
-        max_requests:  int) -> None:
+def run(data_dir:     Path,
+        model_dir:    Path,
+        feature_dir:  str,
+        output_dir:   Path,
+        max_requests: int) -> None:
 
-    # Add extractor scripts to path
-    for d in [extractor_dir, str(data_dir), str(Path(__file__).parent)]:
+    # Add feature extractor scripts to Python path
+    for d in [feature_dir, str(Path(__file__).parent)]:
         if d and d not in sys.path:
             sys.path.insert(0, d)
 
@@ -550,7 +653,7 @@ def run(data_dir:      Path,
     for ft in FEATURE_TYPES:
         mp = model_dir / f"extratrees_{ft}.joblib"
         if not mp.exists():
-            print(f"  [warn] missing: {mp}")
+            print(f"  [warn] missing model: {mp}")
             continue
         clf, le, feature_cols = joblib.load(mp)
         models[ft] = (clf, le, feature_cols)
@@ -560,19 +663,19 @@ def run(data_dir:      Path,
     all_rows = []
     n = len(trials)
     for i, trial in enumerate(trials, 1):
-        print(f"  [{i:3d}/{n}]  {trial['agent']:<26}  {trial['trial']}", end="\r")
+        print(f"  [{i:3d}/{n}]  {trial['agent']:<26}  {trial['trial']}",
+              end="\r")
         rows = evaluate_trial(trial, models, max_requests)
         all_rows.extend(rows)
-    print()  # newline after \r progress
+    print()
 
     # ── save raw results ──────────────────────────────────────────────────────
     raw_df   = pd.DataFrame(all_rows)
     raw_path = output_dir / "results_per_checkpoint.csv"
     raw_df.to_csv(raw_path, index=False)
-    print(f"\n  Saved raw results → {raw_path}  "
-          f"({len(raw_df)} rows)")
+    print(f"\n  Saved raw results → {raw_path}  ({len(raw_df)} rows)")
 
-    # ── compute metrics ───────────────────────────────────────────────────────
+    # ── compute and save metrics ──────────────────────────────────────────────
     print("Computing metrics …")
     metrics      = compute_metrics(raw_df, max_requests)
     metrics_path = output_dir / "metrics_over_requests.csv"
@@ -580,14 +683,20 @@ def run(data_dir:      Path,
     print(f"  Saved metrics     → {metrics_path}")
 
     # Print summary at key request counts
-    key_ns = [1, 2, 3, 5, 8, 10, 15, max_requests]
-    key_ns = sorted(set(n for n in key_ns if n <= max_requests))
-    print(f"\n── Accuracy (combined model) at key request counts ─────────────")
+    key_ns = sorted(set(
+        n for n in [1, 2, 3, 5, 8, 10, 15, max_requests]
+        if n <= max_requests
+    ))
+    print(f"\n── Accuracy (combined model) at key request counts ──────────────")
     print(f"  {'n_req':>5}  {'n_trials':>8}  {'accuracy':>9}  {'macro_F1':>9}")
     print(f"  {'─'*40}")
     for _, row in metrics[metrics["n_req"].isin(key_ns)].iterrows():
+        acc = row["accuracy_combined"]
+        f1  = row["f1_macro_combined"]
+        acc_str = f"{acc:.3f}" if not np.isnan(acc) else "  N/A"
+        f1_str  = f"{f1:.3f}"  if not np.isnan(f1)  else "  N/A"
         print(f"  {int(row['n_req']):>5}  {int(row['n_trials']):>8}  "
-              f"{row['accuracy_combined']:>9.3f}  {row['f1_macro_combined']:>9.3f}")
+              f"{acc_str:>9}  {f1_str:>9}")
 
     # ── plots ─────────────────────────────────────────────────────────────────
     print("\nGenerating plots …")
@@ -601,25 +710,27 @@ def run(data_dir:      Path,
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser(
-        description="Evaluate agent classification across all trials vs requests seen",
+        description="Evaluate agent classification vs requests seen",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    p.add_argument("--data-dir",       required=True,
-                   help="Root directory containing <agent>/<trial>/ subdirs")
-    p.add_argument("--model-dir",      required=True,
-                   help="Directory containing extratrees_*.joblib files")
-    p.add_argument("--extractor-dir",  default=None,
-                   help="Directory containing extract_*_feature.py scripts")
-    p.add_argument("--output-dir",     default="./eval_results",
+    p.add_argument("--data-dir",    required=True,
+                   help="Root dir containing <agent>/<trial>/ subdirs")
+    p.add_argument("--model-dir",   default="../features/trained_model",
+                   help="Dir containing extratrees_*.joblib files "
+                        "(default: ../features/trained_model)")
+    p.add_argument("--feature-dir", default="../features",
+                   help="Dir containing extract_*_feature.py scripts "
+                        "(default: ../features)")
+    p.add_argument("--output-dir",  default="./eval_results",
                    help="Where to save CSVs and plots (default: ./eval_results)")
-    p.add_argument("--max-requests",   type=int, default=30,
-                   help="Maximum request count on the x-axis (default: 30)")
+    p.add_argument("--max-requests", type=int, default=30,
+                   help="Maximum request count on x-axis (default: 30)")
     args = p.parse_args()
 
     run(
-        data_dir      = Path(args.data_dir),
-        model_dir     = Path(args.model_dir),
-        extractor_dir = args.extractor_dir,
-        output_dir    = Path(args.output_dir),
-        max_requests  = args.max_requests,
+        data_dir     = Path(args.data_dir),
+        model_dir    = Path(args.model_dir),
+        feature_dir  = args.feature_dir,
+        output_dir   = Path(args.output_dir),
+        max_requests = args.max_requests,
     )
